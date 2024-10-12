@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 
+from ..services import UsersServiceDependency
+
 users_router = APIRouter(prefix="/users", tags=["Users"])
 
 
@@ -9,18 +11,18 @@ def create_user():
 
 
 @users_router.get("/")
-def get_all_active_users():
-    pass
+def get_all_active_users(users: UsersServiceDependency):
+    return users.get_all_active()
 
 
 @users_router.get("/deleted")
-def get_all_deleted_users():
-    pass
+def get_all_deleted_users(users: UsersServiceDependency):
+    return users.get_all_deleted()
 
 
 @users_router.get("/include_deleted")
-def get_all_users():
-    pass
+async def get_all_users(users: UsersServiceDependency):
+    return users.get_all()
 
 
 @users_router.get("/me")

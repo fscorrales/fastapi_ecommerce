@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 fastapi = {extras = ["standard"], version = "^0.115.0"}
 pymongo = {extras = ["srv"], version = "^4.10.1"}
+pydantic-mongo = "^2.3.0"
 
 
 [build-system]
