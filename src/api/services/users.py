@@ -1,5 +1,7 @@
 __all__ = ["UsersService", "UsersServiceDependency"]
 
+from datetime import datetime
+
 from ..config import db, COLLECTIONS
 from ..utils import validate_and_extract_data
 
@@ -7,9 +9,8 @@ from fastapi import Depends, HTTPException, status
 from typing import Annotated
 
 from ..models import PublicStoredUser, PrivateStoredUser, CreateUser
-from pydantic import ValidationError
 from pydantic_mongo import PydanticObjectId
-from bson import ObjectId
+from pydantic import ValidationError
 
 
 class UsersService:
@@ -92,6 +93,42 @@ class UsersService:
         """Get all active users"""
         cursor = cls.collection.find({"deactivated_at": None})
         return validate_and_extract_data(cursor, PublicStoredUser)
+
+    @classmethod
+    def delete_one(cls, id: PydanticObjectId):
+        document = cls.collection.find_one_and_update(
+            {"_id": id},
+            {"$set": {"deactivated_at": datetime.now()}},
+            return_document=True,
+        )
+        if document:
+            try:
+                validated_doc = PublicStoredUser.model_validate(document)
+                return validated_doc.model_dump()
+            except ValidationError as e:
+                raise HTTPException(
+                    status_code=status.HTTP_204_NO_CONTENT, detail=str(e)
+                )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+
+    @classmethod
+    def delete_one_forever(cls, id: PydanticObjectId):
+        document = cls.collection.find_one_and_delete({"_id": id})
+        if document:
+            try:
+                validated_doc = PublicStoredUser.model_validate(document)
+                return validated_doc.model_dump()
+            except ValidationError as e:
+                raise HTTPException(
+                    status_code=status.HTTP_204_NO_CONTENT, detail=str(e)
+                )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
 
 
 UsersServiceDependency = Annotated[UsersService, Depends()]

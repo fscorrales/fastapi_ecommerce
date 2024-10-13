@@ -2,7 +2,9 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 
 from ..services import UsersServiceDependency
-from ..models import CreateUser
+from ..models import CreateUser, UpdateUser
+
+from pydantic_mongo import PydanticObjectId
 
 users_router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -10,10 +12,8 @@ users_router = APIRouter(prefix="/users", tags=["Users"])
 @users_router.post("/")
 async def create_user(user: CreateUser, users: UsersServiceDependency):
     try:
-        created_user = users.create_one(user)
-        return created_user
+        return users.create_one(user)
     except HTTPException as e:
-        # Manejar la excepción y devolver una respuesta de error
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
@@ -48,10 +48,22 @@ async def update_user():
 
 
 @users_router.delete("/{id}")
-async def delete_user():
-    pass
+async def delete_user(
+    id: PydanticObjectId,
+    users: UsersServiceDependency,
+):
+    try:
+        return users.delete_one(id)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 @users_router.delete("/delete_forever/{id}")
-async def delete_user_forever():
-    pass
+async def delete_user_forever(
+    id: PydanticObjectId,
+    users: UsersServiceDependency,
+):
+    try:
+        return users.delete_one_forever(id)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
