@@ -38,8 +38,8 @@ async def get_me():
 
 
 @users_router.get("/{id}")
-async def get_one_user():
-    pass
+async def get_one_user(id: PydanticObjectId, users: UsersServiceDependency):
+    return users.get_one(id=id)
 
 
 @users_router.put("/{id}")
