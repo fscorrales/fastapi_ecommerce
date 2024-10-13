@@ -8,7 +8,7 @@ from ..utils import validate_and_extract_data
 from fastapi import Depends, HTTPException, status
 from typing import Annotated
 
-from ..models import PublicStoredUser, PrivateStoredUser, CreateUser
+from ..models import PublicStoredUser, PrivateStoredUser, CreateUser, UpdateUser
 from pydantic_mongo import PydanticObjectId
 from pydantic import ValidationError
 
@@ -93,6 +93,27 @@ class UsersService:
         """Get all active users"""
         cursor = cls.collection.find({"deactivated_at": None})
         return validate_and_extract_data(cursor, PublicStoredUser)
+
+    @classmethod
+    def update_one(cls, id: PydanticObjectId, user: UpdateUser):
+        document = cls.collection.find_one_and_update(
+            {"_id": id},
+            {"$set": user.model_dump(exclude={"password"}, exclude_unset=True)},
+            return_document=True,
+        )
+        if document:
+            try:
+                return PublicStoredUser.model_validate(document).model_dump(
+                    exclude_none=True
+                )
+            except ValidationError as e:
+                raise HTTPException(
+                    status_code=status.HTTP_204_NO_CONTENT, detail=str(e)
+                )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
 
     @classmethod
     def delete_one(cls, id: PydanticObjectId):

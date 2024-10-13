@@ -43,8 +43,15 @@ async def get_one_user(id: PydanticObjectId, users: UsersServiceDependency):
 
 
 @users_router.put("/{id}")
-async def update_user():
-    pass
+async def update_user(
+    id: PydanticObjectId,
+    user: UpdateUser,
+    users: UsersServiceDependency,
+):
+    try:
+        return users.update_one(id=id, user=user)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 @users_router.delete("/{id}")
