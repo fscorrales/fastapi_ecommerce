@@ -3,8 +3,9 @@ __all__ = [
     "LoginUser",
     "PublicStoredUser",
     "PrivateStoredUser",
-    "CreationUser",
-    "UpdationUser",
+    "RegisterUser",
+    "CreateUser",
+    "UpdateUser",
 ]
 
 from datetime import datetime
@@ -12,9 +13,10 @@ from enum import Enum
 
 from pydantic import AliasChoices, BaseModel, Field, field_validator
 from pydantic_mongo import PydanticObjectId
+from ..utils import validate_not_empty
 
 
-class CreationRole(str, Enum):
+class RegisterRole(str, Enum):
     customer = "customer"
     seller = "seller"
 
@@ -27,11 +29,11 @@ class Role(str, Enum):
 
 class BaseUser(BaseModel):
     username: str
-    email: str | None = None
+    email: str
     image: str | None = None
 
 
-class UpdationUser(BaseUser):
+class UpdateUser(BaseUser):
     username: str | None = None
     email: str | None = None
     image: str | None = None
@@ -39,14 +41,21 @@ class UpdationUser(BaseUser):
     @field_validator("username", "email", mode="after")
     @classmethod
     def not_empty(cls, field: str) -> str:
-        if not field:
-            raise ValueError("No puede estar vacío")
-        return field
+        return validate_not_empty(field)
 
 
-class CreationUser(BaseUser):
-    role: CreationRole = CreationRole.customer
+class RegisterUser(BaseUser):
+    role: RegisterRole = RegisterRole.customer
     password: str
+
+
+class CreateUser(RegisterUser):
+    role: Role = Role.customer
+
+    @field_validator("username", "email", "password", mode="after")
+    @classmethod
+    def not_empty(cls, field: str) -> str:
+        return validate_not_empty(field)
 
 
 class LoginUser(BaseModel):

@@ -10,7 +10,6 @@ COLLECTIONS = ["products", "users", "orders"]
 
 # Create a new client and connect to the server
 client = MongoClient(MONGODB_URI, server_api=ServerApi("1"))
-# client = MongoClient()  # Local server
 
 # Send a ping to confirm a successful connection
 try:
