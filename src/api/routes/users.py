@@ -32,11 +32,6 @@ async def get_all_users(users: UsersServiceDependency):
     return users.get_all()
 
 
-@users_router.get("/me")
-async def get_me():
-    pass
-
-
 @users_router.get("/{id}")
 async def get_one_user(id: PydanticObjectId, users: UsersServiceDependency):
     return users.get_one(id=id)
