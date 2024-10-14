@@ -7,6 +7,7 @@ from .api.routes import api_router, auth_router
 tags_metadata = [
     {"name": "Auth"},
     {"name": "Users"},
+    {"name": "Products"},
 ]
 
 app = FastAPI(title="Final Project API", openapi_tags=tags_metadata)
