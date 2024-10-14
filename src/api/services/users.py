@@ -4,6 +4,7 @@ from datetime import datetime
 
 from ..config import db, COLLECTIONS
 from ..utils import validate_and_extract_data
+from .auth import AuthenticationDependency
 
 from fastapi import Depends, HTTPException, status
 from typing import Annotated
@@ -33,8 +34,9 @@ class UsersService:
                 status_code=status.HTTP_409_CONFLICT, detail="User already exists"
             )
 
+        hash_password = AuthenticationDependency.get_password_hash(user.password)
         insert_user = user.model_dump(exclude={"password"}, exclude_unset=False)
-        insert_user.update(hash_password="not_hashed_yet")
+        insert_user.update(hash_password=hash_password)
 
         new_user = cls.collection.insert_one(insert_user)
         return PublicStoredUser.model_validate(

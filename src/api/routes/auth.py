@@ -29,10 +29,8 @@ def login_with_cookie(
 def register(
     user: Annotated[RegisterUser, Form()],
     users: UsersServiceDependency,
-    auth: AuthenticationDependency,
 ):
-    hash_password = auth.get_password_hash(user.password)
-    inserted_id = users.create_one(user, hash_password)
+    inserted_id = users.create_one(user)
     return {"result message": f"User created with id: {inserted_id}"}
 
 

@@ -48,6 +48,11 @@ class RegisterUser(BaseUser):
     role: RegisterRole = RegisterRole.customer
     password: str
 
+    @field_validator("username", "email", "password", "role", mode="after")
+    @classmethod
+    def not_empty(cls, field: str) -> str:
+        return validate_not_empty(field)
+
 
 class CreateUser(RegisterUser):
     role: Role = Role.customer
