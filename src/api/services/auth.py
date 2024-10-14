@@ -72,7 +72,6 @@ class Authorization:
         role = self.auth_user_role
         return role == "admin" or role == "customer"
 
-    @property
     def is_admin_or_raise(self):
         if self.auth_user_role != "admin":
             raise HTTPException(
@@ -80,7 +79,6 @@ class Authorization:
                 detail="User does not have admin role",
             )
 
-    @property
     def is_seller_or_raise(self):
         role = self.auth_user_role
         if role != "admin" and role != "seller":
@@ -89,7 +87,6 @@ class Authorization:
                 detail="User does not have seller role",
             )
 
-    @property
     def is_customer_or_raise(self):
         role = self.auth_user_role
         if role != "admin" and role != "customer":
@@ -97,6 +94,14 @@ class Authorization:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User does not have customer role",
             )
+
+    def is_admin_or_same_user(self, user_id):
+        if not self.is_admin:
+            if str(self.auth_user_id) != str(user_id):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="User is not an admin or the user ID does not match",
+                )
 
 
 AuthenticationDependency = Annotated[Authentication, Depends()]
