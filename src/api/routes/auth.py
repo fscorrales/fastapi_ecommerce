@@ -3,8 +3,11 @@ from fastapi import APIRouter, Response, Form
 from typing import Annotated
 
 from ..models import RegisterUser, LoginUser
-from ..services import UsersServiceDependency
-from ..securtity import AuthenticationDependency, AuthorizationDependency
+from ..services import (
+    UsersServiceDependency,
+    AuthenticationDependency,
+    AuthorizationDependency,
+)
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
