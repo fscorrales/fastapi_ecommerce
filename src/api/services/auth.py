@@ -1,4 +1,8 @@
-__all__ = ["AuthenticationDependency", "AuthCredentials", "AuthorizationDependency"]
+__all__ = [
+    "Authentication",
+    "AuthenticationDependency",
+    "AuthorizationDependency",
+]
 
 
 from typing import Annotated
