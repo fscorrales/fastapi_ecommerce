@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Form
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 
 from typing import Annotated
@@ -13,7 +13,7 @@ users_router = APIRouter(prefix="/users", tags=["Users"])
 
 @users_router.post("/")
 async def create_user(
-    user: Annotated[CreateUser, Form()],
+    user: CreateUser,
     users: UsersServiceDependency,
     security: AuthorizationDependency,
 ):
@@ -53,7 +53,7 @@ async def get_one_user(id: PydanticObjectId, users: UsersServiceDependency):
 @users_router.put("/{id}")
 async def update_user(
     id: PydanticObjectId,
-    user: Annotated[UpdateUser, Form()],
+    user: UpdateUser,
     users: UsersServiceDependency,
     security: AuthorizationDependency,
 ):
