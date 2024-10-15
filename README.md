@@ -54,10 +54,15 @@ This project will emphasize creating a robust and secure backend with FastAPI, h
    `[CTRL] + [SHIFT] + [V]` (Windows/Linux) or `[CMD] + [SHIFT] + [V]` (Mac)
 1. [Install Python 3.12]((https://www.python.org/downloads/))
 1. Install poetry (globally):
+    - For windows
    ```bash
-   pip install poetry (Windows)
-   pipx install poetry (Linux/Mac)
+   pip install poetry
    ```
+    - For Linux/Max
+   ```bash
+   pipx install poetry
+   ```
+
 1. Configure poetry:
    ```bash
    poetry config virtualenvs.in-project true
