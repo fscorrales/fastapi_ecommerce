@@ -98,3 +98,6 @@ The `-rA` argument is recommended as it provides a detailed report of the test r
 pytest -rA tests/users
 ```
 
+## Deploy
+Check out the deployed API on Koyeb by following this link: [Deployed API](https://upper-serena-fastapi-ecommerce-6026090d.koyeb.app/docs)
+
