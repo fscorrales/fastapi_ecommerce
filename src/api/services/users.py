@@ -79,14 +79,12 @@ class UsersService:
     @classmethod
     def get_all(cls) -> dict[str, list]:
         """Get all users"""
-        return_dict = {"response": [], "errors": []}
         cursor = cls.collection.find()
         return validate_and_extract_data(cursor, PublicStoredUser)
 
     @classmethod
     def get_all_deleted(cls) -> dict[str, list]:
-        """Get all users"""
-        return_dict = {"response": [], "errors": []}
+        """Get all deleted users"""
         cursor = cls.collection.find({"deactivated_at": {"$ne": None}})
         return validate_and_extract_data(cursor, PublicStoredUser)
 
