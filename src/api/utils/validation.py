@@ -39,6 +39,6 @@ def validate_and_extract_data(cursor: Cursor, model: BaseModel) -> dict[str, lis
                         "type": error["type"],
                     }
                 )
-            return_dict["errors"].append({"object": doc, "details": details})
+            return_dict["errors"].append({"doc_id": str(doc_id), "details": details})
     cursor.close()
     return return_dict

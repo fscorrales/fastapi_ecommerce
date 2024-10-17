@@ -42,3 +42,8 @@ def read_current_user(security: AuthorizationDependency):
         email=security.auth_user_email,
         role=security.auth_user_role,
     )
+
+
+@auth_router.post("/logout", include_in_schema=False)
+def logout():
+    pass
