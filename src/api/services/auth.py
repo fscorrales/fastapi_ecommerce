@@ -107,6 +107,14 @@ class Authorization:
                     detail="User is not an admin or the user ID does not match",
                 )
 
+    def is_admin_or_same_customer(self, user_id):
+        if not self.is_admin:
+            if self.is_customer and (str(self.auth_user_id) != str(user_id)):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="User is not an admin or the user ID does not match",
+                )
+
 
 AuthenticationDependency = Annotated[Authentication, Depends()]
 AuthorizationDependency = Annotated[Authorization, Depends()]
