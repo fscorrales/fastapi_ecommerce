@@ -1,6 +1,6 @@
 __all__ = ["orders_router"]
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic_mongo import PydanticObjectId
 
@@ -28,8 +28,12 @@ def get_order_by_id(
     security: AuthorizationDependency,
     orders: OrdersServiceDependency,
 ):
-    security.is_admin_or_raise()
-    return orders.get_one(id, security)
+    try:
+        order = orders.get_one(id)
+        security.is_admin_or_same_customer(order["customer_id"])
+        return order
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 # @orders_router.get("/get_by_seller/{id}")

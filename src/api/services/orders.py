@@ -116,8 +116,13 @@ class OrdersService:
         return validate_and_extract_data(cursor, StoredOrder)
 
     @classmethod
-    def get_one(cls, id: PydanticObjectId, security: AuthorizationDependency):
-        pass
+    def get_one(cls, id: PydanticObjectId):
+        if db_order := cls.collection.find_one({"_id": id}):
+            return StoredOrder.model_validate(db_order).model_dump()
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+            )
         # filter_criteria: dict = {"_id": id}
 
         # if security.auth_user_role == "customer":
