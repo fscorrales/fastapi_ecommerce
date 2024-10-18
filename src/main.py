@@ -17,6 +17,7 @@ app.include_router(api_router)
 # Let's include our auth routes aside from the API routes
 app.include_router(auth_router)
 
+
 # Set up CORS middleware
 app.add_middleware(
     CORSMiddleware,
