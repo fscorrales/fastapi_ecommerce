@@ -1,52 +1,75 @@
 # Music Products eCommerce Backend (No Payment Gateway)
 
-**Objective**: The goal of this project is to develop a backend API using Python and FastAPI to power an eCommerce platform for selling music-related products. The platform will not include a payment gateway, but it will simulate the purchase process and handle core eCommerce functionalities.
+**Objective**: The goal of this project is to develop a backend API using Python and FastAPI with a MongoDB database to power an eCommerce platform for selling music-related products. The application allows users to browse and purchase music-related products, while sellers can manage their own product listings. Buyers can explore a wide range of items, adding products to their carts and simulating the payment process. The app offers features like user authentication and product search.
+
 
 ## Core Features:
 1. **Model Creation**:
    - **Product**: Represents the music-related products available for sale.
    - **User**: Handles customer and seller profiles.
-   - **Purchase**: Tracks purchases made by users.
+   - **Orders**: Tracks purchases made by users.
 
 2. **Basic Architecture**:
    - **config**: Application configuration settings.
    - **routes**: API routes for handling different requests.
-   - **models**: Data models representing entities (e.g., Product, User, Purchase).
+   - **models**: Data models representing entities (e.g., Product, User, Order).
    - **database**: Database connection and query management.
 
 3. **User Authentication**:
-   - **Login**: Enables user authentication.
-   - **User Registration**: Allows users to create accounts on the platform.
+   - **Register** and **login** as either a buyer or seller.
 
-4. **Product Listings**:
+4. **Profile Management**:
+   - Allows users to edit their profiles and upload a profile image.
+
+5. **Product Listings**:
    - **Pagination**: Ensures the product list is manageable with multiple pages.
    - **Filters**: Users can filter products by specific criteria (e.g., category).
    - **Search**: Provides a search functionality to find specific products.
    - **Sorting**: Sort products by price, popularity, etc.
    - **Seller's Product List**: Allows viewing products listed by a specific seller.
 
-5. **Product Details**:
-   - Provides detailed information about each product.
+6. **Product Details**:
+   - Get detailed information about each product, including price, descriptions, and images.
 
-6. **Seller Information**:
+7. **Seller Information**:
    - Displays information about the seller for each product.
 
-7. **Shopping Cart**:
-   - Allows users to add products to a cart and simulate purchases.
 
 ## Buyer-Specific Features:
-1. **Purchase Simulation**:
-   - Simulates the payment process when a user buys products from the cart.
+1. **Shopping Cart**:
+   - Add, remove, and view items in the cart.
 
-2. **Purchase History**:
+2. **Simulated Payments**: 
+   - Process purchases through a simulated payment system.
+
+3. **Purchase History**:
    - Displays a buyer's past purchases for reference.
 
-3. **Profile Management**:
-   - Allows buyers to edit their profiles and upload a profile image.
+
+## Seller-Specific Features:
+1. **Product Management**: 
+   - Sellers can list, update, and delete products within their own catalog.
+
+2. **Inventory Control**: 
+   - Manage stock levels for each product.
+
+3. **Product Visibility Control**: 
+   - Sellers can choose whether a product is active or inactive on the marketplace, offering flexibility in managing their inventory.
+
+
+##  Admin-Specific Features:
+1.  **User Management**: 
+    -  Admins can view, edit, or delete user profiles (both buyers and sellers).
+
+2.  **Product Moderation**: 
+    -  Approve or reject products listed by sellers to ensure they meet platform guidelines.
+
+3.  **Order Monitoring**: 
+    -  Admins can track all orders across the platform, reviewing order history and identifying any potential issues.
 
 ---
 
-This project will emphasize creating a robust and secure backend with FastAPI, handling user management, product catalogs, and purchase simulations efficiently.
+This project will emphasize creating a robust and secure backend with FastAPI, handling user management, product catalogs, and purchase simulations efficiently. This API will form the backbone of a frontend application where users can interact with the marketplace in real-time.
 
 ## Instructions (lazy version, for VSCode users)
 1. Open the preview of this file to continue:
@@ -87,6 +110,20 @@ This project will emphasize creating a robust and secure backend with FastAPI, h
    fastapi dev src/main.py
    ```
 1. As the console should say, visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+## To run the scripts
+With the virtual environment activated:
+
+   ```bash
+   python -m scripts.drop_collections
+   ```
+   ```bash
+   python -m scripts.seed_database
+   ```
+   ```bash
+   python -m scripts.create_super_user
+   ```
+
 
 ## For testing
 We use pytest for automated testing of the API. You can run the tests by executing:

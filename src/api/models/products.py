@@ -1,14 +1,10 @@
-__all__ = ["Product", "StoredProduct", "UpdationProduct","Type","Seller"]
+__all__ = ["Product", "StoredProduct", "UpdationProduct","Type"]
 
 from pydantic import BaseModel, Field
 from datetime import datetime
 from pydantic_mongo import PydanticObjectId
 from enum import Enum
 
-class Seller(BaseModel):
-    username: str
-    email: str
-    image: str | None = None
 
 class Type(str, Enum): 
     percussion = "Percussion"
@@ -26,7 +22,7 @@ class Product(BaseModel):
     image: str
     type : Type
     deactivated_at: datetime | None = Field(default=None)
-    seller : Seller | None = None
+    seller_id : PydanticObjectId | None = None
 
 
 class UpdationProduct(BaseModel):
@@ -36,7 +32,7 @@ class UpdationProduct(BaseModel):
     description: str | None = None
     image: str | None = None
     deactivated_at: datetime | None = Field(default=None)
-    seller : Seller | None = None
+    seller_id : PydanticObjectId | None = None
 
 
 class StoredProduct(Product):
