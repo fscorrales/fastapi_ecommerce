@@ -34,7 +34,7 @@ print("Creating users...")
 users_ids = []
 for user in users:
     insertion_user = CreateUser.model_validate(user)
-    result_id = UsersService.create_one(insertion_user)
+    result_id = UsersService.create_one(insertion_user).model_dump()["id"]
     users_ids.append(result_id)
 
 # Create some products
@@ -56,7 +56,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=1",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[0],
     },
     {
         "name": "Product 2",
@@ -66,7 +66,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=2",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[1],
     },
     {
         "name": "Product 3",
@@ -76,7 +76,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=3",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[0],
     },
     {
         "name": "Product 4",
@@ -86,7 +86,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=4",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[1],
     },
     {
         "name": "Product 5",
@@ -96,7 +96,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=5",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[0],
     },
     {
         "name": "Product 6",
@@ -106,7 +106,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=6",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[1],
     },
     {
         "name": "Product 7",
@@ -116,7 +116,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=7",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[0],
     },
     {
         "name": "Product 8",
@@ -126,7 +126,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=8",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[1],
     },
     {
         "name": "Product 9",
@@ -136,7 +136,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=9",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[0],
     },
     {
         "name": "Product 10",
@@ -146,7 +146,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=10",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[1],
     },
     {
         "name": "Electric Drum Set",
@@ -156,7 +156,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=11",
         "type": percussion,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[0],
     },
     {
         "name": "Saxophone",
@@ -166,7 +166,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=12",
         "type": wind,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[1],
     },
     {
         "name": "Electric Guitar",
@@ -176,7 +176,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=13",
         "type": string,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[0],
     },
     {
         "name": "Digital Piano",
@@ -186,7 +186,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=14",
         "type": keyboard,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[1],
     },
     {
         "name": "Violin",
@@ -196,7 +196,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=15",
         "type": string,
         "deactivated_at": None,
-        "seller_id": None,
+        "seller_id": users_ids[0],
     },
     {
         "name": "Flute",
@@ -206,7 +206,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=16",
         "type": wind,
         "deactivated_at": None,
-        "seller_id":None,
+        "seller_id": users_ids[1],
     },
     {
         "name": "Synthesizer",
@@ -216,7 +216,7 @@ products = [
         "image": "https://picsum.photos/200/300?random=17",
         "type": electronic,
         "deactivated_at": None,
-        "seller_id":None,
+        "seller_id": users_ids[0],
     },
 ]
 
@@ -225,7 +225,7 @@ print("Creating products...")
 product_ids = []
 for product in products:
     insertion_product = Product.model_validate(product)
-    result_id = ProductsService.create_one(insertion_product)
+    result_id = ProductsService.create_one(insertion_product)["_id"]
     product_ids.append(result_id)
 
 # Create some orders
