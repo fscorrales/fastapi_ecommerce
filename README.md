@@ -111,6 +111,20 @@ This project will emphasize creating a robust and secure backend with FastAPI, h
    ```
 1. As the console should say, visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
+## To run the scripts
+With the virtual environment activated:
+
+   ```bash
+   python -m scripts.drop_collections
+   ```
+   ```bash
+   python -m scripts.seed_database
+   ```
+   ```bash
+   python -m scripts.create_super_user
+   ```
+
+
 ## For testing
 We use pytest for automated testing of the API. You can run the tests by executing:
 ```bash

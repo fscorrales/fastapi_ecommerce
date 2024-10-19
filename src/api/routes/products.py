@@ -38,6 +38,13 @@ async def get_product(id: PydanticObjectId):
     return product
 
 
+@products_router.get("/product_by_sellet/{id}")
+async def get_by_seller(id: PydanticObjectId):
+    product = ProductsService.get_one(id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product
+
 
 @products_router.post("/")
 async def create_product( product: Product):
