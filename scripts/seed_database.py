@@ -1,4 +1,4 @@
-from src.api.models import CreationUser, Order, Product
+from src.api.models import CreateUser, Order, Product
 from src.api.services import OrdersService, ProductsService, UsersService
 
 # Create two basic users
@@ -33,100 +33,190 @@ users = [
 print("Creating users...")
 users_ids = []
 for user in users:
-    insertion_user = CreationUser.model_validate(user)
+    insertion_user = CreateUser.model_validate(user)
     result_id = UsersService.create_one(insertion_user)
     users_ids.append(result_id)
 
 # Create some products
 
+# Definición de tipos de productos
+percussion = "Percussion"
+wind = "Wind"
+string = "String"
+keyboard = "Keyboard"
+electronic = "Electronic"
+
+# Lista de productos
 products = [
     {
-        "seller_id": users_ids[0],
         "name": "Product 1",
-        "description": "Product 1 description",
-        "type": "Keyboard",
         "price": 100,
         "quantity": 10,
+        "description": "Product 1 description",
         "image": "https://picsum.photos/200/300?random=1",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
     },
     {
-        "seller_id": users_ids[0],
         "name": "Product 2",
-        "description": "Product 2 description",
-        "type": "Keyboard",
         "price": 200,
         "quantity": 20,
+        "description": "Product 2 description",
         "image": "https://picsum.photos/200/300?random=2",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
     },
     {
-        "seller_id": users_ids[0],
         "name": "Product 3",
-        "description": "Product 3 description",
-        "type": "Keyboard",
         "price": 300,
         "quantity": 30,
+        "description": "Product 3 description",
         "image": "https://picsum.photos/200/300?random=3",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
     },
     {
-        "seller_id": users_ids[0],
         "name": "Product 4",
-        "description": "Product 4 description",
-        "type": "Keyboard",
         "price": 400,
         "quantity": 40,
+        "description": "Product 4 description",
         "image": "https://picsum.photos/200/300?random=4",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
     },
     {
-        "seller_id": users_ids[0],
         "name": "Product 5",
-        "description": "Product 5 description",
         "price": 500,
         "quantity": 50,
+        "description": "Product 5 description",
         "image": "https://picsum.photos/200/300?random=5",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
     },
     {
-        "seller_id": users_ids[0],
         "name": "Product 6",
-        "description": "Product 6 description",
-        "type": "Keyboard",
         "price": 600,
         "quantity": 60,
+        "description": "Product 6 description",
         "image": "https://picsum.photos/200/300?random=6",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
     },
     {
-        "seller_id": users_ids[1],
         "name": "Product 7",
-        "description": "Product 7 description",
-        "type": "Keyboard",
         "price": 700,
         "quantity": 70,
+        "description": "Product 7 description",
         "image": "https://picsum.photos/200/300?random=7",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
     },
     {
-        "seller_id": users_ids[1],
         "name": "Product 8",
-        "description": "Product 8 description",
-        "type": "Keyboard",
         "price": 800,
         "quantity": 80,
+        "description": "Product 8 description",
         "image": "https://picsum.photos/200/300?random=8",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
     },
     {
-        "seller_id": users_ids[1],
         "name": "Product 9",
-        "description": "Product 9 description",
-        "type": "Keyboard",
         "price": 900,
         "quantity": 90,
+        "description": "Product 9 description",
         "image": "https://picsum.photos/200/300?random=9",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
     },
     {
-        "seller_id": users_ids[1],
         "name": "Product 10",
-        "description": "Product 10 description",
         "price": 1000,
         "quantity": 100,
+        "description": "Product 10 description",
         "image": "https://picsum.photos/200/300?random=10",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
+    },
+    {
+        "name": "Electric Drum Set",
+        "price": 1200,
+        "quantity": 5,
+        "description": "An electric drum set for versatile playing.",
+        "image": "https://picsum.photos/200/300?random=11",
+        "type": percussion,
+        "deactivated_at": None,
+        "seller_id": None,
+    },
+    {
+        "name": "Saxophone",
+        "price": 1500,
+        "quantity": 3,
+        "description": "A classic saxophone for jazz and more.",
+        "image": "https://picsum.photos/200/300?random=12",
+        "type": wind,
+        "deactivated_at": None,
+        "seller_id": None,
+    },
+    {
+        "name": "Electric Guitar",
+        "price": 200,
+        "quantity": 10,
+        "description": "An electric guitar for rock and blues.",
+        "image": "https://picsum.photos/200/300?random=13",
+        "type": string,
+        "deactivated_at": None,
+        "seller_id": None,
+    },
+    {
+        "name": "Digital Piano",
+        "price": 600,
+        "quantity": 15,
+        "description": "A digital piano with realistic sound.",
+        "image": "https://picsum.photos/200/300?random=14",
+        "type": keyboard,
+        "deactivated_at": None,
+        "seller_id": None,
+    },
+    {
+        "name": "Violin",
+        "price": 450,
+        "quantity": 8,
+        "description": "A beautiful violin for classical music.",
+        "image": "https://picsum.photos/200/300?random=15",
+        "type": string,
+        "deactivated_at": None,
+        "seller_id": None,
+    },
+    {
+        "name": "Flute",
+        "price": 300,
+        "quantity": 12,
+        "description": "A simple flute for beginners.",
+        "image": "https://picsum.photos/200/300?random=16",
+        "type": wind,
+        "deactivated_at": None,
+        "seller_id":None,
+    },
+    {
+        "name": "Synthesizer",
+        "price": 800,
+        "quantity": 4,
+        "description": "A powerful synthesizer for electronic music.",
+        "image": "https://picsum.photos/200/300?random=17",
+        "type": electronic,
+        "deactivated_at": None,
+        "seller_id":None,
     },
 ]
 

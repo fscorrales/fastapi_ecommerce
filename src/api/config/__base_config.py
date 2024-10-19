@@ -16,9 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Set environment variables
-MONGODB_URI = os.getenv(
-    "MONGODB_URI", "mongodb+srv://leonardocanteros2001:8eMDuMQAfXPgesvQ@products.ydzet.mongodb.net/"
-)
+MONGODB_URI = os.getenv("MONGODB_URI")
 
 JWT_SECRET = os.getenv("JWT_SECRET", "super_secret_key")
 
