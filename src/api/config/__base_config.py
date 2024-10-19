@@ -16,7 +16,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Set environment variables
-MONGODB_URI = os.getenv("MONGODB_URI")
+MONGODB_URI = os.getenv(
+    "MONGODB_URI", "mongodb://127.0.0.1:27017/bootcamp_eCommerce_app"
+)
 
 JWT_SECRET = os.getenv("JWT_SECRET", "super_secret_key")
 
