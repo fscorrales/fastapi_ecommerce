@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api.config import allowed_origins
 from .api.routes import api_router, auth_router
 
 tags_metadata = [
@@ -21,7 +20,7 @@ app.include_router(auth_router)
 # Set up CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
