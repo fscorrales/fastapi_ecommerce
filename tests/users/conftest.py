@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.fixture
-def active_users_schema():
+def users_schema():
     return {
         "response": {
             "type": "array",
