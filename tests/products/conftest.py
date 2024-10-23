@@ -4,26 +4,24 @@ import pytest
 @pytest.fixture
 def products_schema():
     return {
-        "response": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "id": {"type": "string"},
-                    "name": {"type": "string"},
-                    "price": {"type": ["integer", "null"]},
-                    "quantity": {"type": ["string", "null"]},
-                    "description": {"type": "string"},
-                    "image": {"type": ["string", "null"]},
-                    "type": {"type": "string"},
-                    "deactivated_at": {"type": ["string", "null"]},
-                    "seller_id": {"type": "string"},
-                },
-                "required": ["id", "name", "seller_id"],
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "name": {"type": "string"},
+                "price": {"type": "number"},
+                "quantity": {"type": "integer"},
+                "description": {"type": ["string", "null"]},
+                "image": {"type": ["string", "null"]},
+                "type": {"type": "string"},
+                "deactivated_at": {"type": ["string", "null"]},
+                "seller_id": {"type": "string"},
             },
+            "required": ["id", "seller_id", "price", "quantity", "type"],
         },
-        "error": {},
     }
+
 
 #   "response": [
 #     {

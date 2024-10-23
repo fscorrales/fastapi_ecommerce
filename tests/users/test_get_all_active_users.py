@@ -9,4 +9,5 @@ client = TestClient(app)
 def test_get_all_active_users(users_schema):
     response = client.get("/api/users/")
     assert response.status_code == 200
-    jsonschema.validate(instance=response.json(), schema=users_schema)
+    data = response.json()["response"]
+    jsonschema.validate(instance=data, schema=users_schema)
