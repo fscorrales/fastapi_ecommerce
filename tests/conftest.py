@@ -55,7 +55,7 @@ def login_as_admin(create_and_delete_admin, dict_test_user):
 
 
 @pytest.fixture
-def login_as_user(create_and_delete_customer, dict_test_user_two):
+def login_as_customer(create_and_delete_customer, dict_test_user_two):
     user_id = create_and_delete_customer
     user = LoginUser(**dict_test_user_two)
     access_token = Authentication().login_and_set_access_token(

@@ -14,8 +14,8 @@ def test_delete_user(login_as_admin, create_and_delete_customer):
     assert response.json().get("deactivated_at") != None
 
 
-def test_delete_user_with_incorrect_auth(login_as_user, create_and_delete_admin):
-    access_token = login_as_user.get("access_token")
+def test_delete_user_with_incorrect_auth(login_as_customer, create_and_delete_admin):
+    access_token = login_as_customer.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
     user_id = create_and_delete_admin
     response = client.delete(f"/api/users/{user_id}", headers=headers)

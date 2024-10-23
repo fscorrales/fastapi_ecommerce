@@ -38,9 +38,9 @@ def test_update_user(
 
 
 def test_update_user_with_incorrect_auth(
-    login_as_user, create_and_delete_admin, dict_test_user
+    login_as_customer, create_and_delete_admin, dict_test_user
 ):
-    access_token = login_as_user.get("access_token")
+    access_token = login_as_customer.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
     user_id = create_and_delete_admin
     response = client.put(f"/api/users/{user_id}", headers=headers, json=dict_test_user)
