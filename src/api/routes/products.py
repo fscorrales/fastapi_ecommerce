@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
 from pydantic_mongo import PydanticObjectId
 
-from ..models import Product, UpdationProduct, StoredProduct
+from ..models import Product, UpdateProduct, StoredProduct
 from ..services import (
     ProductsService,
     ProductsServiceDependency,
@@ -48,7 +48,7 @@ async def get_product(id: PydanticObjectId):
     return product
 
 
-@products_router.get("/product_by_sellet/{id}")
+@products_router.get("/product_by_seller/{id}")
 async def get_by_seller(id: PydanticObjectId):
     product = ProductsService.get_one(id)
     if not product:
@@ -57,12 +57,20 @@ async def get_by_seller(id: PydanticObjectId):
 
 
 @products_router.post("/")
-async def create_product(product: Product):
-    return ProductsService.create_one(product)
+async def create_product(
+    product: Product,
+    products: ProductsServiceDependency,
+    security: AuthorizationDependency,
+):
+    try:
+        security.is_admin_or_same_seller(product.model_dump()["seller_id"])
+        return products.create_one(product)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 @products_router.put("/{id}")
-async def update_product(id: PydanticObjectId, product: UpdationProduct):
+async def update_product(id: PydanticObjectId, product: UpdateProduct):
     return ProductsService.update_one(id=id, product=product)
 
 
@@ -73,4 +81,4 @@ async def delete_product(id: PydanticObjectId):
 
 @products_router.delete("/delete_hard/{id}")
 async def delete_product_hard(id: PydanticObjectId):
-    return ProductsService.delete_product_hard(id)
+    return ProductsService.delete_one_hard(id)

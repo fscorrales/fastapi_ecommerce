@@ -38,29 +38,24 @@ class UpdateUser(BaseUser):
     email: str | None = None
     image: str | None = None
 
-    @field_validator("username", "email", mode="after")
-    @classmethod
-    def not_empty(cls, field: str) -> str:
-        return validate_not_empty(field)
+    _not_empty = field_validator("username", "email", mode="after")(validate_not_empty)
 
 
 class RegisterUser(BaseUser):
     role: RegisterRole = RegisterRole.customer
     password: str
 
-    @field_validator("username", "email", "password", "role", mode="after")
-    @classmethod
-    def not_empty(cls, field: str) -> str:
-        return validate_not_empty(field)
+    _not_empty = field_validator("username", "email", "password", mode="after")(
+        validate_not_empty
+    )
 
 
 class CreateUser(RegisterUser):
     role: Role = Role.customer
 
-    @field_validator("username", "email", "password", mode="after")
-    @classmethod
-    def not_empty(cls, field: str) -> str:
-        return validate_not_empty(field)
+    _not_empty = field_validator("username", "email", "password", mode="after")(
+        validate_not_empty
+    )
 
 
 class LoginUser(BaseModel):

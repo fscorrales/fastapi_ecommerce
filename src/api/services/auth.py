@@ -114,6 +114,24 @@ class Authorization:
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="User is not an admin or the user ID does not match",
                 )
+            elif self.is_seller:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Only admins and customers with matching ID are allowed",
+                )
+
+    def is_admin_or_same_seller(self, user_id):
+        if not self.is_admin:
+            if self.is_seller and (str(self.auth_user_id) != str(user_id)):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="User is not an admin or the user ID does not match",
+                )
+            elif self.is_customer:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Only admins and sellers with matching ID are allowed",
+                )
 
 
 AuthenticationDependency = Annotated[Authentication, Depends()]

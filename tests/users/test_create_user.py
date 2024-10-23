@@ -15,7 +15,7 @@ def test_create_user(login_as_admin, dict_test_user_two):
     response = client.post("/api/users/", json=dict_test_user_two, headers=headers)
     assert response.status_code == 200
     if user_id := response.json().get("id"):
-        UsersServiceDependency().delete_one_forever(id=ObjectId(user_id))
+        UsersServiceDependency().delete_one_hard(id=ObjectId(user_id))
 
 
 def test_create_user_without_auth():

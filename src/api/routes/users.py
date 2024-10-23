@@ -77,14 +77,14 @@ async def delete_user(
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
-@users_router.delete("/delete_forever/{id}")
-async def delete_user_forever(
+@users_router.delete("/delete_hard/{id}")
+async def delete_user_hard(
     id: PydanticObjectId,
     users: UsersServiceDependency,
     security: AuthorizationDependency,
 ):
     try:
         security.is_admin_or_raise()
-        return users.delete_one_forever(id)
+        return users.delete_one_hard(id)
     except HTTPException as e:
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)

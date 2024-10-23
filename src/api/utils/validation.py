@@ -1,4 +1,9 @@
-__all__ = ["validate_not_empty", "validate_and_extract_data"]
+__all__ = [
+    "validate_not_empty",
+    "validate_and_extract_data",
+    "validate_greater_than_zero",
+    "validate_positive_number",
+]
 
 from pymongo.cursor import Cursor
 from bson import ObjectId
@@ -7,7 +12,19 @@ from pydantic import BaseModel, ValidationError
 
 def validate_not_empty(field: str) -> str:
     if not field:
-        raise ValueError("field cannot be empty or zero")
+        raise ValueError("Field cannot be empty or zero")
+    return field
+
+
+def validate_greater_than_zero(field: str):
+    if field <= 0:
+        raise ValueError("Value must be greater than 0")
+    return field
+
+
+def validate_positive_number(field: str):
+    if field < 0:
+        raise ValueError("Value must be a positive number")
     return field
 
 
