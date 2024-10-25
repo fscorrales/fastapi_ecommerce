@@ -68,6 +68,20 @@ def test_create_product_with_incorrect_auth(login_as_customer, dict_test_product
             "quantity": 100,
             "type": "otro",
         },
+        {
+            "name": "Test Product",
+            "price": 10985.75,
+            "quantity": 10,
+            "type": "Keyboard",
+            "description": 12345,
+        },
+        {
+            "name": "Test Product",
+            "price": 10985.75,
+            "quantity": 10,
+            "type": "Keyboard",
+            "image": 12345,
+        },
     ],
 )
 def test_create_product_with_invalid_fields(login_as_seller, test_fields):
