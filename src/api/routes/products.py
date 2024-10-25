@@ -75,10 +75,26 @@ async def update_product(id: PydanticObjectId, product: UpdateProduct):
 
 
 @products_router.delete("/{id}")
-async def delete_product(id: PydanticObjectId):
-    return ProductsService.delete_one(id)
+async def delete_product(
+    id: PydanticObjectId,
+    products: ProductsServiceDependency,
+    security: AuthorizationDependency,
+):
+    try:
+        security.is_admin_or_same_seller(id)
+        return products.delete_one(id)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 @products_router.delete("/delete_hard/{id}")
-async def delete_product_hard(id: PydanticObjectId):
-    return ProductsService.delete_one_hard(id)
+async def delete_product_hard(
+    id: PydanticObjectId,
+    products: ProductsServiceDependency,
+    security: AuthorizationDependency,
+):
+    try:
+        security.is_admin_or_raise()
+        return products.delete_one_hard(id)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
