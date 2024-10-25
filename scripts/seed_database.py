@@ -1,4 +1,4 @@
-from src.api.models import CreateUser, Order, Product
+from src.api.models import CreateUser, Order, CreateProduct
 from src.api.services import OrdersService, ProductsService, UsersService
 
 # Create two basic users
@@ -224,7 +224,7 @@ products = [
 print("Creating products...")
 product_ids = []
 for product in products:
-    insertion_product = Product.model_validate(product)
+    insertion_product = CreateProduct.model_validate(product)
     result_id = ProductsService.create_one(insertion_product)["_id"]
     product_ids.append(result_id)
 

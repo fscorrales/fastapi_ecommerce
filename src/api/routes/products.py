@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
 from pydantic_mongo import PydanticObjectId
 
-from ..models import Product, UpdateProduct, StoredProduct
+from ..models import CreateProduct, UpdateProduct, StoredProduct
 from ..services import (
     ProductsService,
     ProductsServiceDependency,
@@ -58,7 +58,7 @@ async def get_by_seller(id: PydanticObjectId):
 
 @products_router.post("/")
 async def create_product(
-    product: Product,
+    product: CreateProduct,
     products: ProductsServiceDependency,
     security: AuthorizationDependency,
 ):

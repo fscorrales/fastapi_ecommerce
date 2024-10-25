@@ -1,4 +1,8 @@
 import pytest
+from ...src.api.models import CreateProduct
+from ...src.api.services import ProductsServiceDependency
+
+from bson import ObjectId
 
 
 @pytest.fixture
@@ -36,5 +40,11 @@ def dict_test_product() -> dict:
 
 
 @pytest.fixture
-def create_and_delete_product():
-    pass
+def create_and_delete_product(dict_test_product, create_and_delete_seller):
+    dict_test_product["seller_id"] = create_and_delete_seller
+    product = CreateProduct(**dict_test_product)
+    product_id = (
+        ProductsServiceDependency().create_one(product=product).model_dump()["id"]
+    )
+    yield product_id
+    ProductsServiceDependency().delete_one_hard(id=ObjectId(product_id))

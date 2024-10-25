@@ -7,7 +7,7 @@ from fastapi import Depends, HTTPException, status
 from pydantic_mongo import PydanticObjectId
 from ..utils import validate_and_extract_data
 from ..config import COLLECTIONS, db, logger
-from ..models import Product, StoredProduct, UpdateProduct
+from ..models import CreateProduct, StoredProduct, UpdateProduct
 from pydantic import ValidationError
 
 
@@ -16,7 +16,7 @@ class ProductsService:
     collection = db[collection_name]
 
     @classmethod
-    def create_one(cls, product: Product):
+    def create_one(cls, product: CreateProduct):
         try:
             insertion_product = product.model_dump(exclude_unset=False)
             new_product = cls.collection.insert_one(insertion_product)

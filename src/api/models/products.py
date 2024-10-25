@@ -1,4 +1,4 @@
-__all__ = ["Product", "StoredProduct", "UpdateProduct", "Type"]
+__all__ = ["CreateProduct", "StoredProduct", "UpdateProduct", "Type"]
 
 from pydantic import BaseModel, Field, AliasChoices, field_validator
 from datetime import datetime
@@ -19,7 +19,7 @@ class Type(str, Enum):
     electronic = "Electronic"
 
 
-class Product(BaseModel):
+class CreateProduct(BaseModel):
     name: str
     price: float
     quantity: int
@@ -50,6 +50,6 @@ class UpdateProduct(BaseModel):
     image: str | None = None
 
 
-class StoredProduct(Product):
+class StoredProduct(CreateProduct):
     id: PydanticObjectId = Field(validation_alias=AliasChoices("_id", "id"))
     deactivated_at: datetime | None = Field(default=None)
