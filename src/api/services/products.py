@@ -89,26 +89,21 @@ class ProductsService:
 
     @classmethod
     def update_one(cls, id: PydanticObjectId, product: UpdateProduct):
-        try:
-            product_dict = product.model_dump(exclude_unset=True)
-            document = cls.collection.find_one_and_update(
-                {"_id": id},
-                {"$set": product_dict},
-                return_document=True,
-            )
-            if document:
+        document = cls.collection.find_one_and_update(
+            {"_id": id},
+            {"$set": product.model_dump(exclude_unset=True)},
+            return_document=True,
+        )
+        if document:
+            try:
                 return StoredProduct.model_validate(document).model_dump()
-            else:
+            except ValidationError as e:
                 raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
+                    status_code=status.HTTP_204_NO_CONTENT, detail=str(e)
                 )
-        except HTTPException:
-            raise
-        except Exception as e:
-            logger.error(f"Error in update_one: {str(e)}")
+        else:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error updating one product",
+                status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
             )
 
     @classmethod

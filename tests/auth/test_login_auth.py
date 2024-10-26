@@ -39,6 +39,6 @@ def test_login_auth_with_invalid_fields(create_and_delete_admin, test_fields):
     assert response.status_code != 200
 
 
-def test_login_auth_with_valid_fields(create_and_delete_admin, dict_test_user):
-    response = client.post("/auth/login/", data=dict_test_user)
+def test_login_auth_with_valid_fields(create_and_delete_admin, dict_test_admin):
+    response = client.post("/auth/login/", data=dict_test_admin)
     assert response.status_code == 200

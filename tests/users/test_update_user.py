@@ -23,27 +23,29 @@ client = TestClient(app)
     ],
 )
 def test_update_user(
-    login_as_admin, create_and_delete_customer, dict_test_user_two, updated_fields
+    login_as_admin, create_and_delete_customer, dict_test_customer, updated_fields
 ):
     access_token = login_as_admin.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
     user_id = create_and_delete_customer
     response = client.put(f"/api/users/{user_id}", headers=headers, json=updated_fields)
     assert response.status_code == 200
-    dict_test_user_two.pop("password")
-    dict_test_user_two["id"] = str(user_id)
-    dict_test_user_two.update(updated_fields)
-    dict_test_user_two = {k: v for k, v in dict_test_user_two.items() if v is not None}
-    assert response.json() == dict_test_user_two
+    dict_test_customer.pop("password")
+    dict_test_customer["id"] = str(user_id)
+    dict_test_customer.update(updated_fields)
+    dict_test_customer = {k: v for k, v in dict_test_customer.items() if v is not None}
+    assert response.json() == dict_test_customer
 
 
 def test_update_user_with_incorrect_auth(
-    login_as_customer, create_and_delete_admin, dict_test_user
+    login_as_customer, create_and_delete_admin, dict_test_admin
 ):
     access_token = login_as_customer.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
     user_id = create_and_delete_admin
-    response = client.put(f"/api/users/{user_id}", headers=headers, json=dict_test_user)
+    response = client.put(
+        f"/api/users/{user_id}", headers=headers, json=dict_test_admin
+    )
     assert response.status_code != 200
 
 

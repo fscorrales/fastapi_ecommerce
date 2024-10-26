@@ -22,14 +22,14 @@ def test_delete_product_without_credentials(create_and_delete_product):
     assert response.status_code == 401
 
 
-# def test_delete_product_with_incorrect_auth(
-#     login_as_customer, create_and_delete_product
-# ):
-#     access_token = login_as_customer.get("access_token")
-#     headers = {"Authorization": f"Bearer {access_token}"}
-#     product_id = create_and_delete_product
-#     response = client.delete(f"/api/products/{product_id}", headers=headers)
-#     assert response.status_code == 401
+def test_delete_product_with_incorrect_auth(
+    login_as_customer, create_and_delete_product
+):
+    access_token = login_as_customer.get("access_token")
+    headers = {"Authorization": f"Bearer {access_token}"}
+    product_id = create_and_delete_product
+    response = client.delete(f"/api/products/{product_id}", headers=headers)
+    assert response.status_code == 401
 
 
 def test_delete_product_with_invalid_id(login_as_admin):

@@ -70,8 +70,17 @@ async def create_product(
 
 
 @products_router.put("/{id}")
-async def update_product(id: PydanticObjectId, product: UpdateProduct):
-    return ProductsService.update_one(id=id, product=product)
+async def update_product(
+    id: PydanticObjectId,
+    product: UpdateProduct,
+    products: ProductsServiceDependency,
+    security: AuthorizationDependency,
+):
+    try:
+        security.is_admin_or_same_user(id)
+        return products.update_one(id=id, product=product)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 @products_router.delete("/{id}")

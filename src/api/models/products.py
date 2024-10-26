@@ -7,7 +7,7 @@ from enum import Enum
 from ..utils import (
     validate_not_empty,
     validate_greater_than_zero,
-    validate_positive_number,
+    validate_non_negative,
 )
 
 
@@ -33,13 +33,7 @@ class CreateProduct(BaseModel):
     _greater_than_zero = field_validator("price", mode="after")(
         validate_greater_than_zero
     )
-    _positive_number = field_validator("quantity", mode="after")(
-        validate_positive_number
-    )
-
-    # @classmethod
-    # def not_empty(cls, field: str) -> str:
-    #     return validate_not_empty(field)
+    _non_negative = field_validator("quantity", mode="after")(validate_non_negative)
 
 
 class UpdateProduct(BaseModel):
@@ -48,6 +42,14 @@ class UpdateProduct(BaseModel):
     quantity: int | None = None
     description: str | None = None
     image: str | None = None
+    type: Type | None = None
+    _not_empty = field_validator("name", "price", "quantity", mode="after")(
+        validate_not_empty
+    )
+    _greater_than_zero = field_validator("price", mode="after")(
+        validate_greater_than_zero
+    )
+    _non_negative = field_validator("quantity", mode="after")(validate_non_negative)
 
 
 class StoredProduct(CreateProduct):

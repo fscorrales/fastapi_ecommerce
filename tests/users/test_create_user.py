@@ -9,10 +9,10 @@ from ...src.api.services import UsersServiceDependency
 client = TestClient(app)
 
 
-def test_create_user(login_as_admin, dict_test_user_two):
+def test_create_user(login_as_admin, dict_test_seller):
     access_token = login_as_admin.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
-    response = client.post("/api/users/", json=dict_test_user_two, headers=headers)
+    response = client.post("/api/users/", json=dict_test_seller, headers=headers)
     assert response.status_code == 200
     if user_id := response.json().get("id"):
         UsersServiceDependency().delete_one_hard(id=ObjectId(user_id))
@@ -23,7 +23,7 @@ def test_create_user_without_auth():
     assert response.status_code == 401
 
 
-def test_create_user_without_body(login_as_admin, dict_test_user):
+def test_create_user_without_body(login_as_admin, dict_test_admin):
     access_token = login_as_admin.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
     response = client.post("/api/users/", json={}, headers=headers)

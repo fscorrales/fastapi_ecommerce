@@ -2,7 +2,7 @@ __all__ = [
     "validate_not_empty",
     "validate_and_extract_data",
     "validate_greater_than_zero",
-    "validate_positive_number",
+    "validate_non_negative",
 ]
 
 from pymongo.cursor import Cursor
@@ -22,7 +22,7 @@ def validate_greater_than_zero(field: str):
     return field
 
 
-def validate_positive_number(field: str):
+def validate_non_negative(field: str):
     if field < 0:
         raise ValueError("Value must be a positive number")
     return field
