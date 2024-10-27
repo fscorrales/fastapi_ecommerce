@@ -16,18 +16,6 @@ def validate_not_empty(field: str) -> str:
     return field
 
 
-def validate_greater_than_zero(field: str):
-    if field <= 0:
-        raise ValueError("Value must be greater than 0")
-    return field
-
-
-def validate_non_negative(field: str):
-    if field < 0:
-        raise ValueError("Value must be a positive number")
-    return field
-
-
 def validate_and_extract_data(cursor: Cursor, model: BaseModel) -> dict[str, list]:
     """Validates and extracts data from MongoDB documents.
 

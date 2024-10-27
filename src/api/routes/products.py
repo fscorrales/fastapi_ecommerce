@@ -1,13 +1,14 @@
 __all__ = ["products_router"]
 
+from typing import Annotated
 from fastapi import APIRouter
 
-from fastapi import HTTPException, status
+from fastapi import HTTPException, Query
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
 from pydantic_mongo import PydanticObjectId
 
-from ..models import CreateProduct, UpdateProduct, StoredProduct
+from ..models import CreateProduct, UpdateProduct, FilterParamsProduct
 from ..services import (
     ProductsService,
     ProductsServiceDependency,
@@ -20,8 +21,11 @@ products_router = APIRouter(prefix="/products", tags=["Products"])
 
 
 @products_router.get("/")
-async def list_products(products: ProductsServiceDependency):
-    return products.get_all_active()
+async def list_products(
+    products: ProductsServiceDependency,
+    filter_query: Annotated[FilterParamsProduct, Query()],
+):
+    return products.get_all_active(filter_query)
 
 
 @products_router.get("/deleted")

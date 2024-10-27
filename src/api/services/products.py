@@ -7,7 +7,7 @@ from fastapi import Depends, HTTPException, status
 from pydantic_mongo import PydanticObjectId
 from ..utils import validate_and_extract_data
 from ..config import COLLECTIONS, db, logger
-from ..models import CreateProduct, StoredProduct, UpdateProduct
+from ..models import CreateProduct, StoredProduct, UpdateProduct, FilterParamsProduct
 from pydantic import ValidationError
 
 
@@ -31,10 +31,11 @@ class ProductsService:
             )
 
     @classmethod
-    def get_all_active(cls) -> dict[str, list]:
+    def get_all_active(cls, query: FilterParamsProduct) -> dict[str, list]:
         """Get all active products."""
         try:
-            cursor = cls.collection.find({"deactivated_at": None})
+            print(query)
+            cursor = query.query_collection(cls.collection)
             return validate_and_extract_data(cursor, StoredProduct)
         except Exception as e:
             logger.error(f"Error in get_all_active: {str(e)}")
