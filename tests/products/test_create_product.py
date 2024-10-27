@@ -5,11 +5,13 @@ from fastapi.testclient import TestClient
 
 from ...src.main import app
 from ...src.api.services import ProductsServiceDependency
+from ...src.api.models import CreateProduct
 
 client = TestClient(app)
 
 
 def test_create_product(login_as_seller, dict_test_product):
+    print(CreateProduct.model_json_schema())
     access_token = login_as_seller.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
     dict_test_product["seller_id"] = login_as_seller.get("user_id")

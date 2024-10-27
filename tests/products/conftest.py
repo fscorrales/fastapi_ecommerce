@@ -6,23 +6,38 @@ from bson import ObjectId
 
 
 @pytest.fixture
-def products_schema():
+def create_product_schema():
+    # pprint(products.CreateProduct.model_json_schema())
     return {
+        "$defs": {
+            "Type": {
+                "enum": ["Percussion", "Wind", "String", "Keyboard", "Electronic"],
+                "title": "Type",
+                "type": "string",
+            }
+        },
         "type": "array",
         "items": {
-            "type": "object",
             "properties": {
-                "id": {"type": "string"},
-                "name": {"type": "string"},
-                "price": {"type": "number"},
-                "quantity": {"type": "integer"},
-                "description": {"type": ["string", "null"]},
-                "image": {"type": ["string", "null"]},
-                "type": {"type": "string"},
-                "deactivated_at": {"type": ["string", "null"]},
-                "seller_id": {"type": "string"},
+                "description": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}],
+                    "default": None,
+                    "title": "Description",
+                },
+                "image": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}],
+                    "default": None,
+                    "title": "Image",
+                },
+                "name": {"title": "Name", "type": "string"},
+                "price": {"exclusiveMinimum": 0.0, "title": "Price", "type": "number"},
+                "quantity": {"minimum": 0, "title": "Quantity", "type": "integer"},
+                "seller_id": {"title": "Seller Id", "type": "string"},
+                "type": {"$ref": "#/$defs/Type"},
             },
-            "required": ["id", "seller_id", "price", "quantity", "type", "name"],
+            "required": ["name", "price", "quantity", "type", "seller_id"],
+            "title": "CreateProduct",
+            "type": "object",
         },
     }
 

@@ -19,6 +19,7 @@ python-multipart = "^0.0.12"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 jsonschema = "^4.23.0"
+ptpython = "^3.0.29"
 
 [build-system]
 requires = ["poetry-core"]
