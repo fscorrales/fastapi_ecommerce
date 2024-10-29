@@ -14,7 +14,7 @@ from enum import Enum
 from typing import Optional, Literal
 
 from pymongo.collection import Collection
-from pydantic import AliasChoices, BaseModel, Field, field_validator, HttpUrl
+from pydantic import AliasChoices, BaseModel, Field, field_validator, HttpUrl, EmailStr
 from pydantic_mongo import PydanticObjectId
 from ..utils import validate_not_empty, convert_url_to_string, filter_dict
 
@@ -32,14 +32,14 @@ class Role(str, Enum):
 
 class BaseUser(BaseModel):
     username: str
-    email: str
+    email: EmailStr
     image: HttpUrl | None = None
     _convert_to_str = field_validator("image", mode="after")(convert_url_to_string)
 
 
 class UpdateUser(BaseUser):
     username: str | None = None
-    email: str | None = None
+    email: EmailStr | None = None
     image: HttpUrl | None = None
     _not_empty = field_validator("username", "email", mode="after")(validate_not_empty)
     _convert_to_str = field_validator("image", mode="after")(convert_url_to_string)

@@ -87,6 +87,12 @@ def test_create_user_without_body(login_as_admin, dict_test_admin):
             "password": "12345",
             "role": "",
         },
+        {
+            "username": "AnotherTest",
+            "email": "hola",
+            "password": "12345",
+            "role": "admin",
+        },
     ],
 )
 def test_create_user_with_invalid_fields(login_as_admin, test_fields):

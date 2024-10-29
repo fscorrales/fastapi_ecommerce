@@ -14,6 +14,7 @@ pydantic-mongo = "^2.3.0"
 fastapi-jwt = {extras = ["authlib"], version = "^0.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-multipart = "^0.0.12"
+email-validator = "^2.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
