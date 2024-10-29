@@ -3,9 +3,8 @@ __all__ = ["products_router"]
 from typing import Annotated
 from fastapi import APIRouter
 
-from fastapi import HTTPException, Query
+from fastapi import HTTPException, Query, APIRouter
 from fastapi.responses import JSONResponse
-from fastapi.routing import APIRouter
 from pydantic_mongo import PydanticObjectId
 
 from ..models import CreateProduct, UpdateProduct, FilterParamsProduct

@@ -9,7 +9,13 @@ from .auth import Authentication
 from fastapi import Depends, HTTPException, status
 from typing import Annotated
 
-from ..models import PublicStoredUser, PrivateStoredUser, CreateUser, UpdateUser
+from ..models import (
+    PublicStoredUser,
+    PrivateStoredUser,
+    CreateUser,
+    UpdateUser,
+    FilterParamsUser,
+)
 from pydantic_mongo import PydanticObjectId
 from pydantic import ValidationError
 
@@ -77,21 +83,21 @@ class UsersService:
             )
 
     @classmethod
-    def get_all(cls) -> dict[str, list]:
+    def get_all(cls, query: FilterParamsUser) -> dict[str, list]:
         """Get all users"""
-        cursor = cls.collection.find()
+        cursor = query.query_collection(cls.collection)
         return validate_and_extract_data(cursor, PublicStoredUser)
 
     @classmethod
-    def get_all_deleted(cls) -> dict[str, list]:
+    def get_all_deleted(cls, query: FilterParamsUser) -> dict[str, list]:
         """Get all deleted users"""
-        cursor = cls.collection.find({"deactivated_at": {"$ne": None}})
+        cursor = query.query_collection(cls.collection, get_deleted=True)
         return validate_and_extract_data(cursor, PublicStoredUser)
 
     @classmethod
-    def get_all_active(cls) -> dict[str, list]:
+    def get_all_active(cls, query: FilterParamsUser) -> dict[str, list]:
         """Get all active users"""
-        cursor = cls.collection.find({"deactivated_at": None})
+        cursor = query.query_collection(cls.collection, get_deleted=False)
         return validate_and_extract_data(cursor, PublicStoredUser)
 
     @classmethod
