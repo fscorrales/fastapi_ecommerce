@@ -5,7 +5,7 @@ __all__ = [
     "FilterParamsProduct",
 ]
 
-from typing import Literal
+from typing import Literal, Optional
 from pydantic import (
     BaseModel,
     Field,
@@ -15,10 +15,11 @@ from pydantic import (
     NonNegativeInt,
 )
 from datetime import datetime
+from pydantic import HttpUrl
 from pydantic_mongo import PydanticObjectId
 from pymongo.collection import Collection
 from enum import Enum
-from ..utils import validate_not_empty
+from ..utils import validate_not_empty, filter_dict, convert_url_to_string
 
 
 class Type(str, Enum):
@@ -34,12 +35,13 @@ class CreateProduct(BaseModel):
     price: PositiveFloat
     quantity: NonNegativeInt
     description: str | None = None
-    image: str | None = None
+    image: HttpUrl | None = None
     type: Type
     seller_id: PydanticObjectId
     _not_empty = field_validator("name", "price", "quantity", mode="after")(
         validate_not_empty
     )
+    _convert_to_str = field_validator("image", mode="after")(convert_url_to_string)
 
 
 class UpdateProduct(BaseModel):
@@ -47,11 +49,12 @@ class UpdateProduct(BaseModel):
     price: PositiveFloat | None = None
     quantity: NonNegativeInt | None = None
     description: str | None = None
-    image: str | None = None
+    image: HttpUrl | None = None
     type: Type | None = None
     _not_empty = field_validator("name", "price", "quantity", mode="after")(
         validate_not_empty
     )
+    _convert_to_str = field_validator("image", mode="after")(convert_url_to_string)
 
 
 class StoredProduct(CreateProduct):
@@ -60,17 +63,19 @@ class StoredProduct(CreateProduct):
 
 
 class FilterParamsProduct(BaseModel):
-    limit: int = Field(100, gt=0, le=100)
+    query_filter: str = ""
+    limit: int = Field(100, gt=0)
     offset: int = Field(0, ge=0)
-    sort_by: Literal["price", "name"] = "price"
+    sort_by: Literal["id", "price", "name", "type"] = "id"
     sort_dir: Literal["asc", "desc"] = "asc"
-    tags: list[str] = []
+    categories: Type | None = None
 
-    @classmethod
-    def query_collection(cls, collection: Collection):
+    def query_collection(
+        self, collection: Collection, get_deleted: Optional[bool] = None
+    ):
         return (
-            collection.find({})
-            # .skip(cls.offset)
-            # .limit(cls.limit)
-            # .sort(cls.sort_by, 1 if cls.sort_dir == "asc" else -1)
+            collection.find(filter_dict(self.query_filter, get_deleted))
+            .skip(self.offset)
+            .limit(self.limit)
+            .sort(self.sort_by, 1 if self.sort_dir == "asc" else -1)
         )

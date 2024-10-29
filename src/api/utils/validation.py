@@ -1,13 +1,19 @@
-__all__ = ["validate_not_empty", "validate_and_extract_data"]
+__all__ = ["validate_not_empty", "validate_and_extract_data", "convert_url_to_string"]
 
 from pymongo.cursor import Cursor
 from bson import ObjectId
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, HttpUrl
 
 
 def validate_not_empty(field: str) -> str:
     if not field:
         raise ValueError("Field cannot be empty or zero")
+    return field
+
+
+def convert_url_to_string(field: HttpUrl) -> str:
+    if field:
+        return str(field)
     return field
 
 

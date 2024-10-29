@@ -23,25 +23,29 @@ products_router = APIRouter(prefix="/products", tags=["Products"])
 @products_router.get("/")
 async def list_products(
     products: ProductsServiceDependency,
-    filter_query: Annotated[FilterParamsProduct, Query()],
+    query: Annotated[FilterParamsProduct, Query()],
 ):
-    return products.get_all_active(filter_query)
+    return products.get_all_active(query)
 
 
 @products_router.get("/deleted")
 async def list_deleted_products(
-    products: ProductsServiceDependency, security: AuthorizationDependency
+    products: ProductsServiceDependency,
+    security: AuthorizationDependency,
+    query: Annotated[FilterParamsProduct, Query()],
 ):
     security.is_admin_or_raise()
-    return products.get_all_deleted()
+    return products.get_all_deleted(query)
 
 
 @products_router.get("/include_deleted")
 async def list_products(
-    products: ProductsServiceDependency, security: AuthorizationDependency
+    products: ProductsServiceDependency,
+    security: AuthorizationDependency,
+    query: Annotated[FilterParamsProduct, Query()],
 ):
     security.is_admin_or_raise()
-    return products.get_all()
+    return products.get_all(query)
 
 
 @products_router.get("/{id}")

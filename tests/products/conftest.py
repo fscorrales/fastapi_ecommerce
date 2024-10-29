@@ -25,7 +25,15 @@ def create_product_schema():
                     "title": "Description",
                 },
                 "image": {
-                    "anyOf": [{"type": "string"}, {"type": "null"}],
+                    "anyOf": [
+                        {
+                            "format": "uri",
+                            "maxLength": 2083,
+                            "minLength": 1,
+                            "type": "string",
+                        },
+                        {"type": "null"},
+                    ],
                     "default": None,
                     "title": "Image",
                 },
@@ -101,7 +109,7 @@ def test_valid_product_fields(request):
             "price": 10985.75,
             "quantity": 10,
             "type": "Keyboard",
-            "image": 12345,
+            "image": "12345",
         },
     ]
 )

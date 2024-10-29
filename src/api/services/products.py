@@ -19,6 +19,7 @@ class ProductsService:
     def create_one(cls, product: CreateProduct):
         try:
             insertion_product = product.model_dump(exclude_unset=False)
+
             new_product = cls.collection.insert_one(insertion_product)
             return StoredProduct.model_validate(
                 cls.collection.find_one(new_product.inserted_id)
@@ -34,8 +35,7 @@ class ProductsService:
     def get_all_active(cls, query: FilterParamsProduct) -> dict[str, list]:
         """Get all active products."""
         try:
-            print(query)
-            cursor = query.query_collection(cls.collection)
+            cursor = query.query_collection(cls.collection, get_deleted=False)
             return validate_and_extract_data(cursor, StoredProduct)
         except Exception as e:
             logger.error(f"Error in get_all_active: {str(e)}")
@@ -45,10 +45,10 @@ class ProductsService:
             )
 
     @classmethod
-    def get_all_deleted(cls) -> List[StoredProduct]:
+    def get_all_deleted(cls, query: FilterParamsProduct) -> List[StoredProduct]:
         """Get all deleted products."""
         try:
-            cursor = cls.collection.find({"deactivated_at": {"$ne": None}})
+            cursor = query.query_collection(cls.collection, get_deleted=True)
             return validate_and_extract_data(cursor, StoredProduct)
         except Exception as e:
             logger.error(f"Error in get_all_deleted: {str(e)}")
@@ -58,10 +58,10 @@ class ProductsService:
             )
 
     @classmethod
-    def get_all(cls) -> List[StoredProduct]:
+    def get_all(cls, query: FilterParamsProduct) -> List[StoredProduct]:
         """Get all products including deleted."""
         try:
-            cursor = cls.collection.find()
+            cursor = query.query_collection(cls.collection)
             return validate_and_extract_data(cursor, StoredProduct)
         except Exception as e:
             logger.error(f"Error in get_all: {str(e)}")
