@@ -1,10 +1,14 @@
-__all__ = ["filter_dict"]
+__all__ = ["data_filter"]
 
 from bson import ObjectId
 from typing import Optional
 
 
-def filter_dict(filter_params: str, get_deleted: Optional[bool] = None):
+def data_filter(
+    filter_params: str,
+    get_deleted: Optional[bool] = None,
+    extra_filter: Optional[dict] = None,
+):
     filter_dict = {}
     filter_item_list = filter_params.split(",")
 
@@ -15,6 +19,9 @@ def filter_dict(filter_params: str, get_deleted: Optional[bool] = None):
         filter_dict.update(
             deactivated_at={"$ne": None} if get_deleted else {"$eq": None}
         )
+
+    if extra_filter:
+        filter_dict.update(extra_filter)
 
     return filter_dict
 

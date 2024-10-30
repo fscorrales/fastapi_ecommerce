@@ -16,7 +16,8 @@ from typing import Optional, Literal
 from pymongo.collection import Collection
 from pydantic import AliasChoices, BaseModel, Field, field_validator, HttpUrl, EmailStr
 from pydantic_mongo import PydanticObjectId
-from ..utils import validate_not_empty, convert_url_to_string, filter_dict
+from ..utils import validate_not_empty, convert_url_to_string, data_filter
+from ..config import logger
 
 
 class RegisterRole(str, Enum):
@@ -84,13 +85,16 @@ class FilterParamsUser(BaseModel):
     offset: int = Field(0, ge=0)
     sort_by: Literal["id", "username", "email"] = "id"
     sort_dir: Literal["asc", "desc"] = "asc"
-    categories: Role | None = None
+    role: Role | None = None
 
     def query_collection(
         self, collection: Collection, get_deleted: Optional[bool] = None
     ):
+
+        extra_filter = {"role": {"$eq": self.role.value}} if self.role else None
+
         return (
-            collection.find(filter_dict(self.query_filter, get_deleted))
+            collection.find(data_filter(self.query_filter, get_deleted, extra_filter))
             .skip(self.offset)
             .limit(self.limit)
             .sort(self.sort_by, 1 if self.sort_dir == "asc" else -1)

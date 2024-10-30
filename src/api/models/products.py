@@ -19,7 +19,7 @@ from pydantic import HttpUrl
 from pydantic_mongo import PydanticObjectId
 from pymongo.collection import Collection
 from enum import Enum
-from ..utils import validate_not_empty, filter_dict, convert_url_to_string
+from ..utils import validate_not_empty, data_filter, convert_url_to_string
 
 
 class Type(str, Enum):
@@ -68,13 +68,16 @@ class FilterParamsProduct(BaseModel):
     offset: int = Field(0, ge=0)
     sort_by: Literal["id", "price", "name", "type"] = "id"
     sort_dir: Literal["asc", "desc"] = "asc"
-    categories: Type | None = None
+    category: Type | None = None
 
     def query_collection(
         self, collection: Collection, get_deleted: Optional[bool] = None
     ):
+
+        extra_filter = {"type": {"$eq": self.category.value}} if self.category else None
+
         return (
-            collection.find(filter_dict(self.query_filter, get_deleted))
+            collection.find(data_filter(self.query_filter, get_deleted, extra_filter))
             .skip(self.offset)
             .limit(self.limit)
             .sort(self.sort_by, 1 if self.sort_dir == "asc" else -1)
