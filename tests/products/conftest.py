@@ -109,7 +109,7 @@ def test_valid_product_fields(request):
             "price": 10985.75,
             "quantity": 10,
             "type": "Keyboard",
-            "image": "12345",
+            "image": 123,
         },
     ]
 )

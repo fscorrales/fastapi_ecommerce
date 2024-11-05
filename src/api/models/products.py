@@ -15,7 +15,6 @@ from pydantic import (
     NonNegativeInt,
 )
 from datetime import datetime
-from pydantic import HttpUrl
 from pydantic_mongo import PydanticObjectId
 from pymongo.collection import Collection
 from enum import Enum
@@ -35,13 +34,12 @@ class CreateProduct(BaseModel):
     price: PositiveFloat
     quantity: NonNegativeInt
     description: str | None = None
-    image: HttpUrl | None = None
+    image: str | None = None
     type: Type
     seller_id: PydanticObjectId
     _not_empty = field_validator("name", "price", "quantity", mode="after")(
         validate_not_empty
     )
-    _convert_to_str = field_validator("image", mode="after")(convert_url_to_string)
 
 
 class UpdateProduct(BaseModel):
@@ -49,12 +47,11 @@ class UpdateProduct(BaseModel):
     price: PositiveFloat | None = None
     quantity: NonNegativeInt | None = None
     description: str | None = None
-    image: HttpUrl | None = None
+    image: str | None = None
     type: Type | None = None
     _not_empty = field_validator("name", "price", "quantity", mode="after")(
         validate_not_empty
     )
-    _convert_to_str = field_validator("image", mode="after")(convert_url_to_string)
 
 
 class StoredProduct(CreateProduct):
