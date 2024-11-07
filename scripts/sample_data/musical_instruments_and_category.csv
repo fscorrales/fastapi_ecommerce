@@ -1,0 +1,56 @@
+category,instrument  
+String,Acoustic Guitar
+String,Electric Guitar
+String,Bass Guitar
+String,Violin
+String,Viola
+String,Cello
+String,Double Bass
+String,Ukulele
+String,Mandolin
+String,Banjo
+String,Harp
+Wind,Flute
+Wind,Clarinet
+Wind,Oboe
+Wind,Bassoon
+Wind,Saxophone
+Wind,Recorder
+Wind,Harmonica
+Wind,Piccolo
+Wind,English Horn
+Wind,Pan Flute
+Percussion,Drum Kit
+Percussion,Snare Drum
+Percussion,Bass Drum
+Percussion,Conga
+Percussion,Bongo
+Percussion,Cajón
+Percussion,Djembe
+Percussion,Marimba
+Percussion,Xylophone
+Percussion,Timpani
+Keyboard,Grand Piano
+Keyboard,Upright Piano
+Keyboard,Electric Keyboard
+Keyboard,Synthesizer
+Keyboard,Organ
+Keyboard,Harpsichord
+Keyboard,Digital Piano
+Keyboard,Accordion
+Keyboard,Melodica
+Brass,Trumpet
+Brass,Trombone
+Brass,French Horn
+Brass,Tuba
+Brass,Cornet
+Brass,Flugelhorn
+Brass,Euphonium
+Brass,Sousaphone
+Electronic,Digital Drum Pad
+Electronic,Drum Machine
+Electronic,Sampler
+Electronic,MIDI Controller
+Electronic,Electric Violin
+Electronic,Theremin
+Electronic,Synth Bass
