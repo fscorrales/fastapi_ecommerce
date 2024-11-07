@@ -3,6 +3,7 @@ __all__ = [
     "StoredProduct",
     "UpdateProduct",
     "FilterParamsProduct",
+    "Category",
 ]
 
 from typing import Literal, Optional

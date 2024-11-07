@@ -5,6 +5,7 @@ __all__ = [
     "HOST_URL",
     "HOST_PORT",
     "FRONTEND_HOST",
+    "UNSPLASH_ACCESS_KEY",
 ]
 
 import logging
@@ -27,6 +28,8 @@ HOST_URL = os.getenv("HOST_URL", "localhost")
 FRONTEND_HOST = os.getenv("FRONTEND_HOST", "localhost")
 
 HOST_PORT = int(os.getenv("HOST_PORT") or 8000)
+
+UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)

@@ -1,5 +1,7 @@
-from src.api.models import CreateUser, Order, CreateProduct
+from src.api.models import CreateUser, Order, CreateProduct, Category
 from src.api.services import OrdersService, ProductsService, UsersService
+from src.api.config import UNSPLASH_ACCESS_KEY
+from .get_img_unsplash import get_img_unsplash
 import json
 import os
 import random
@@ -44,6 +46,14 @@ with open(data_file) as f:
 
 # Create some products
 print("Creating products...")
+if UNSPLASH_ACCESS_KEY:
+    unsplash_img = {}
+    categories = [category.value for category in Category]
+    for category in categories:
+        unsplash_img[category] = get_img_unsplash(
+            UNSPLASH_ACCESS_KEY, category + " musical instrument", 50
+        )
+
 product_ids = []
 product = {}
 for result in results:
@@ -52,7 +62,11 @@ for result in results:
     product["price"] = result["price"]
     product["quantity"] = result["quantity"]
     product["description"] = result["description"]
-    product["image"] = result["image"]
+    product["image"] = (
+        random.choice(unsplash_img[product["category"]])
+        if UNSPLASH_ACCESS_KEY
+        else result["image"]
+    )
     product["seller_id"] = random.choice(seller_ids)
     insertion_product = CreateProduct.model_validate(product)
     result_id = ProductsService.create_one(insertion_product).model_dump()["id"]
