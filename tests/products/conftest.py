@@ -10,9 +10,16 @@ def create_product_schema():
     # pprint(products.CreateProduct.model_json_schema())
     return {
         "$defs": {
-            "Type": {
-                "enum": ["Percussion", "Wind", "String", "Keyboard", "Electronic"],
-                "title": "Type",
+            "Category": {
+                "enum": [
+                    "Percussion",
+                    "Wind",
+                    "String",
+                    "Keyboard",
+                    "Electronic",
+                    "Brass",
+                ],
+                "title": "Category",
                 "type": "string",
             }
         },
@@ -41,9 +48,9 @@ def create_product_schema():
                 "price": {"exclusiveMinimum": 0.0, "title": "Price", "type": "number"},
                 "quantity": {"minimum": 0, "title": "Quantity", "type": "integer"},
                 "seller_id": {"title": "Seller Id", "type": "string"},
-                "type": {"$ref": "#/$defs/Type"},
+                "category": {"$ref": "#/$defs/Category"},
             },
-            "required": ["name", "price", "quantity", "type", "seller_id"],
+            "required": ["name", "price", "quantity", "category", "seller_id"],
             "title": "CreateProduct",
             "type": "object",
         },
@@ -58,7 +65,7 @@ def dict_test_product() -> dict:
         "quantity": 10,
         "description": "Test Product Description",
         "image": "https://picsum.photos/200/300?random=1",
-        "type": "Keyboard",
+        "category": "Keyboard",
     }
 
 
@@ -78,12 +85,12 @@ def create_and_delete_product(dict_test_product, create_and_delete_seller):
         {"name": "Test Product"},
         {"price": 10985.75},
         {"quantity": 10},
-        {"type": "Keyboard"},
+        {"category": "Keyboard"},
         {
             "name": "Test Product",
             "price": 10985.75,
             "quantity": 10,
-            "type": "Keyboard",
+            "category": "Keyboard",
         },
     ]
 )
@@ -93,22 +100,27 @@ def test_valid_product_fields(request):
 
 @pytest.fixture(
     params=[
-        {"name": "", "price": 10985.75, "quantity": 10, "type": "Keyboard"},
-        {"name": "Test Product", "price": 0, "quantity": 10, "type": "Keyboard"},
-        {"name": "Test Product", "price": 100, "quantity": -1, "type": "Keyboard"},
-        {"name": "Test Product", "price": 100, "quantity": 100, "type": "otro"},
+        {"name": "", "price": 10985.75, "quantity": 10, "category": "Keyboard"},
+        {"name": "Test Product", "price": 0, "quantity": 10, "category": "Keyboard"},
+        {
+            "name": "Test Product",
+            "price": 100,
+            "quantity": -1,
+            "category": "Keyboard",
+        },
+        {"name": "Test Product", "price": 100, "quantity": 100, "category": "otro"},
         {
             "name": "Test Product",
             "price": 10985.75,
             "quantity": 10,
-            "type": "Keyboard",
+            "category": "Keyboard",
             "description": 12345,
         },
         {
             "name": "Test Product",
             "price": 10985.75,
             "quantity": 10,
-            "type": "Keyboard",
+            "category": "Keyboard",
             "image": 123,
         },
     ]

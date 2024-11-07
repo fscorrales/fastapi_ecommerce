@@ -21,12 +21,13 @@ from enum import Enum
 from ..utils import validate_not_empty, data_filter, convert_url_to_string
 
 
-class Type(str, Enum):
+class Category(str, Enum):
     percussion = "Percussion"
     wind = "Wind"
     string = "String"
     keyboard = "Keyboard"
     electronic = "Electronic"
+    brass = "Brass"
 
 
 class CreateProduct(BaseModel):
@@ -35,7 +36,7 @@ class CreateProduct(BaseModel):
     quantity: NonNegativeInt
     description: str | None = None
     image: str | None = None
-    type: Type
+    category: Category
     seller_id: PydanticObjectId
     _not_empty = field_validator("name", "price", "quantity", mode="after")(
         validate_not_empty
@@ -48,7 +49,7 @@ class UpdateProduct(BaseModel):
     quantity: NonNegativeInt | None = None
     description: str | None = None
     image: str | None = None
-    type: Type | None = None
+    category: Category | None = None
     _not_empty = field_validator("name", "price", "quantity", mode="after")(
         validate_not_empty
     )
@@ -63,15 +64,17 @@ class FilterParamsProduct(BaseModel):
     query_filter: str = ""
     limit: int = Field(100, gt=0)
     offset: int = Field(0, ge=0)
-    sort_by: Literal["id", "price", "name", "type"] = "id"
+    sort_by: Literal["id", "price", "name", "category"] = "id"
     sort_dir: Literal["asc", "desc"] = "asc"
-    category: Type | None = None
+    category: Category | None = None
 
     def query_collection(
         self, collection: Collection, get_deleted: Optional[bool] = None
     ):
 
-        extra_filter = {"type": {"$eq": self.category.value}} if self.category else None
+        extra_filter = (
+            {"category": {"$eq": self.category.value}} if self.category else None
+        )
 
         return (
             collection.find(data_filter(self.query_filter, get_deleted, extra_filter))
