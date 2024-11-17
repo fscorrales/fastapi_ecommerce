@@ -65,7 +65,7 @@ async def update_user(
 ):
     try:
         security.is_admin_or_same_user(id)
-        return users.update_one(id=id, user=user)
+        return users.update_one(id=id, user=user, is_admin=security.is_admin)
     except HTTPException as e:
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 

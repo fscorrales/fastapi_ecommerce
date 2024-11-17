@@ -101,10 +101,11 @@ class UsersService:
         return validate_and_extract_data(cursor, PublicStoredUser)
 
     @classmethod
-    def update_one(cls, id: PydanticObjectId, user: UpdateUser):
+    def update_one(cls, id: PydanticObjectId, user: UpdateUser, is_admin: bool):
+        exclude = {"password"} if is_admin else {"password", "role"}
         document = cls.collection.find_one_and_update(
             {"_id": id},
-            {"$set": user.model_dump(exclude={"password"}, exclude_unset=True)},
+            {"$set": user.model_dump(exclude=exclude, exclude_unset=True)},
             return_document=True,
         )
         if document:

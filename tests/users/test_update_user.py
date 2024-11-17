@@ -20,6 +20,7 @@ client = TestClient(app)
         },
         {"username": "UpdatedTest", "image": None},
         {"email": "UpdatedTest@test.com", "image": None},
+        {"email": "UpdatedTest@test.com", "image": None, "role": "admin"},
     ],
 )
 def test_update_user(

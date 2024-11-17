@@ -41,7 +41,10 @@ class UpdateUser(BaseUser):
     username: str | None = None
     email: EmailStr | None = None
     image: str | None = None
-    _not_empty = field_validator("username", "email", mode="after")(validate_not_empty)
+    role: Role | None = None
+    _not_empty = field_validator("username", "email", "role", mode="after")(
+        validate_not_empty
+    )
 
 
 class RegisterUser(BaseUser):

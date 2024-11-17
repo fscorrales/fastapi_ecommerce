@@ -9,6 +9,8 @@ from ..services import (
     AuthorizationDependency,
 )
 
+from bson import ObjectId
+
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
@@ -36,12 +38,13 @@ def register(
 
 @auth_router.get("/authenticated_user")
 def read_current_user(security: AuthorizationDependency):
-    return dict(
-        id=security.auth_user_id,
-        username=security.auth_user_name,
-        email=security.auth_user_email,
-        role=security.auth_user_role,
-    )
+    return UsersServiceDependency.get_one(id=ObjectId(security.auth_user_id))
+    # return dict(
+    #     id=security.auth_user_id,
+    #     username=security.auth_user_name,
+    #     email=security.auth_user_email,
+    #     role=security.auth_user_role,
+    # )
 
 
 @auth_router.post("/logout", include_in_schema=False)
