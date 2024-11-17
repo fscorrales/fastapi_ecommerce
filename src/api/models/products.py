@@ -63,7 +63,7 @@ class StoredProduct(CreateProduct):
 
 class FilterParamsProduct(BaseModel):
     query_filter: str = ""
-    limit: int = Field(100, gt=0)
+    limit: int = Field(0)
     offset: int = Field(0, ge=0)
     sort_by: Literal["id", "price", "name", "category"] = "id"
     sort_dir: Literal["asc", "desc"] = "asc"
