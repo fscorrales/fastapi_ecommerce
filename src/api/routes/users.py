@@ -4,11 +4,17 @@ from fastapi.responses import JSONResponse
 from typing import Annotated
 
 from ..services import UsersServiceDependency, AuthorizationDependency
-from ..models import CreateUser, UpdateUser, FilterParamsUser
+from ..models import CreateUser, UpdateUser, FilterParamsUser, Role
 
 from pydantic_mongo import PydanticObjectId
 
 users_router = APIRouter(prefix="/users", tags=["Users"])
+
+
+@users_router.get("/roles")
+async def list_roles():
+    roles_list = [item.value for item in Role]
+    return roles_list
 
 
 @users_router.post("/")

@@ -7,7 +7,7 @@ from fastapi import HTTPException, Query, APIRouter
 from fastapi.responses import JSONResponse
 from pydantic_mongo import PydanticObjectId
 
-from ..models import CreateProduct, UpdateProduct, FilterParamsProduct
+from ..models import CreateProduct, UpdateProduct, FilterParamsProduct, Category
 from ..services import (
     ProductsService,
     ProductsServiceDependency,
@@ -17,6 +17,12 @@ from ..services import (
 from typing import List
 
 products_router = APIRouter(prefix="/products", tags=["Products"])
+
+
+@products_router.get("/categories")
+async def list_categories():
+    categories_list = [item.value for item in Category]
+    return categories_list
 
 
 @products_router.get("/")

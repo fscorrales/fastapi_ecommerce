@@ -7,6 +7,7 @@ __all__ = [
     "CreateUser",
     "UpdateUser",
     "FilterParamsUser",
+    "Role",
 ]
 
 from datetime import datetime
