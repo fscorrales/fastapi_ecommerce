@@ -11,7 +11,7 @@ data_dir = os.path.join(current_dir, "sample_data")
 
 # Read JSON from randomuser.me api
 data_file = os.path.join(data_dir, "users.json")
-with open(data_file, encoding='utf-8') as f:
+with open(data_file, encoding="utf-8") as f:
     users = json.load(f)
 
 results = users["results"]
@@ -33,7 +33,7 @@ for result in results:
 
 # Read JSON from mockaroo api
 data_file = os.path.join(data_dir, "products.json")
-with open(data_file, encoding='utf-8') as f:
+with open(data_file, encoding="utf-8") as f:
     results = json.load(f)
 
 # Create some products
@@ -81,14 +81,33 @@ for _ in range(1000):
         product_id = random.choice(product_ids)
         price = round(random.uniform(0.1, 1000000), 2)
         quantity = random.randint(1, 3)
-        order["order_products"].append({
-            "product_id": product_id,
-            "price": price,
-            "quantity": quantity,
-        })
+        order["order_products"].append(
+            {
+                "product_id": product_id,
+                "price": price,
+                "quantity": quantity,
+            }
+        )
 
     orders.append(order)
 
+# Remove orders that do not meet the constraint
+filtered_orders = []
+shopping_orders = {}
+
+for order in orders:
+    customer_id = order["customer_id"]
+    if order["status"] == "shopping":
+        if customer_id not in shopping_orders:
+            shopping_orders[customer_id] = True
+            filtered_orders.append(order)
+        else:
+            continue
+    else:
+        filtered_orders.append(order)
+
+# Update the list of orders with the filtered list
+orders = filtered_orders
 
 print("Creating orders...")
 for order in orders:
