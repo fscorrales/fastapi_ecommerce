@@ -51,6 +51,66 @@ class OrdersService:
     assert (collection_name := "orders") in COLLECTIONS
     collection = db[collection_name]
 
+    @classmethod
+    def get_shopping_cart_by_customer(
+        cls, customer_id: PydanticObjectId, order_status: str = "shopping"
+    ):
+        print(customer_id)
+        if db_order := cls.collection.find_one({"customer_id": customer_id}):
+            pipeline = [
+                # Filtro por customer_id y estado de la orden
+                {
+                    "$match": {
+                        "customer_id": customer_id,
+                        "status": order_status,
+                    }
+                },
+                # Lookup para obtener los productos
+                {"$unwind": "$order_products"},
+                {
+                    "$lookup": {
+                        "from": "products",
+                        "localField": "order_products.product_id",
+                        "foreignField": "_id",
+                        "as": "product",
+                    }
+                },
+                # Unwind para obtener un documento por producto
+                {"$unwind": "$product"},
+                # Proyección para obtener solo los campos necesarios
+                {
+                    # "$project": {
+                    #     "_id": {"$toString": "$_id"},
+                    #     "order_products": {
+                    #         "product_id": {"$toString": "$product._id"},
+                    #         "price": "$order_products.price",
+                    #         "quantity": "$order_products.quantity",
+                    #         "name": "$product.name",
+                    #         "image": "$product.image",
+                    #     },
+                    # }
+                    "$group": {
+                        "_id": {"$toString": "$_id"},
+                        "detalle": {
+                            "$push": {
+                                "product_id": {
+                                    "$toString": "$order_products.product_id"
+                                },
+                                "price": "$order_products.price",
+                                "quantity": "$order_products.quantity",
+                                "name": "$order_products.name",
+                                "image": "$order_products.image",
+                            }
+                        },
+                    }
+                },
+            ]
+            return list(cls.collection.aggregate(pipeline))
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+            )
+
     # Used by seed_database.py
     @classmethod
     def create_one(cls, order: Order):

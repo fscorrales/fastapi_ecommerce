@@ -38,7 +38,9 @@ def get_order_by_id(
 
 # @orders_router.get("/get_by_seller/{id}")
 # def get_orders_by_seller_id(
-#     id: PydanticObjectId, security: SecurityDependency, orders: OrdersServiceDependency
+#     id: PydanticObjectId,
+#     security: AuthorizationDependency,
+#     orders: OrdersServiceDependency,
 # ):
 #     if security.auth_user_role != "admin" and security.auth_user_id != id:
 #         return JSONResponse(
@@ -48,19 +50,17 @@ def get_order_by_id(
 #     return orders.get_all(QueryParams(filter=f"seller_id={id}"), security)
 
 
-# @orders_router.get("/get_by_customer/{id}")
-# def get_orders_by_customer_id(
-#     id: PydanticObjectId, security: SecurityDependency, orders: OrdersServiceDependency
-# ):
-#     if security.auth_user_id != id and security.auth_user_role != "admin":
-#         return (
-#             JSONResponse(
-#                 {"error": "User does not have access to this orders"},
-#                 status_code=status.HTTP_401_UNAUTHORIZED,
-#             ),
-#         )
-
-#     return orders.get_all(QueryParams(filter=f"customer_id={id}"), security)
+@orders_router.get("/shopping_cart_by_customer/{id}")
+def get_shopping_cart_by_customer(
+    id: PydanticObjectId,
+    security: AuthorizationDependency,
+    orders: OrdersServiceDependency,
+):
+    try:
+        security.is_admin_or_same_customer(id)
+        return orders.get_shopping_cart_by_customer(id)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 # @orders_router.get("/get_by_product/{id}")

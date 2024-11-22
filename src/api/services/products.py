@@ -149,7 +149,6 @@ class ProductsService:
     @classmethod
     def get_by_seller(cls, seller_id: PydanticObjectId):
         try:
-            print(seller_id)
             cursor = cls.collection.find({"seller_id": seller_id})
             return validate_and_extract_data(cursor, StoredProduct)
         except Exception as e:
