@@ -19,7 +19,7 @@ from datetime import datetime
 from pydantic_mongo import PydanticObjectId
 from pymongo.collection import Collection
 from enum import Enum
-from ..utils import validate_not_empty, data_filter, convert_url_to_string
+from ..utils import validate_not_empty, data_filter
 
 
 class Category(str, Enum):

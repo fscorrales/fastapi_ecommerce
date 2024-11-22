@@ -5,7 +5,7 @@ __all__ = [
 
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, NonNegativeInt, PositiveFloat
 from pydantic_mongo import PydanticObjectId
 
 
@@ -17,8 +17,8 @@ class OrderStatus(str, Enum):
 
 class OrderProducts(BaseModel):
     product_id: PydanticObjectId
-    price: float
-    quantity: int
+    price: PositiveFloat
+    quantity: NonNegativeInt
 
 
 class UpdateOrderProduct(OrderProducts):
