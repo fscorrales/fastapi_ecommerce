@@ -55,57 +55,44 @@ class OrdersService:
     def get_shopping_cart_by_customer(
         cls, customer_id: PydanticObjectId, order_status: str = "shopping"
     ):
-        print(customer_id)
-        if db_order := cls.collection.find_one({"customer_id": customer_id}):
-            pipeline = [
-                # Filtro por customer_id y estado de la orden
-                {
-                    "$match": {
-                        "customer_id": customer_id,
-                        "status": order_status,
-                    }
-                },
-                # Lookup para obtener los productos
-                {"$unwind": "$order_products"},
-                {
-                    "$lookup": {
-                        "from": "products",
-                        "localField": "order_products.product_id",
-                        "foreignField": "_id",
-                        "as": "product",
-                    }
-                },
-                # Unwind para obtener un documento por producto
-                {"$unwind": "$product"},
-                # Proyección para obtener solo los campos necesarios
-                {
-                    # "$project": {
-                    #     "_id": {"$toString": "$_id"},
-                    #     "order_products": {
-                    #         "product_id": {"$toString": "$product._id"},
-                    #         "price": "$order_products.price",
-                    #         "quantity": "$order_products.quantity",
-                    #         "name": "$product.name",
-                    #         "image": "$product.image",
-                    #     },
-                    # }
-                    "$group": {
-                        "_id": {"$toString": "$_id"},
-                        "detalle": {
-                            "$push": {
-                                "product_id": {
-                                    "$toString": "$order_products.product_id"
-                                },
-                                "price": "$order_products.price",
-                                "quantity": "$order_products.quantity",
-                                "name": "$order_products.name",
-                                "image": "$order_products.image",
-                            }
-                        },
-                    }
-                },
-            ]
-            return list(cls.collection.aggregate(pipeline))
+        pipeline = [
+            # Filters orders by customer_id and order_status
+            {
+                "$match": {
+                    "customer_id": customer_id,
+                    "status": order_status,
+                }
+            },
+            # Performs a lookup to retrieve the products associated with the orde
+            {"$unwind": "$order_products"},
+            {
+                "$lookup": {
+                    "from": "products",
+                    "localField": "order_products.product_id",
+                    "foreignField": "_id",
+                    "as": "product",
+                }
+            },
+            {"$unwind": "$product"},
+            # Groups the results by order ID and extracts the necessary fields for each product
+            {
+                "$group": {
+                    "_id": {"$toString": "$_id"},
+                    "order_products": {
+                        "$push": {
+                            "product_id": {"$toString": "$order_products.product_id"},
+                            "price": "$order_products.price",
+                            "quantity": "$order_products.quantity",
+                            "name": "$order_products.name",
+                            "image": "$order_products.image",
+                        }
+                    },
+                }
+            },
+        ]
+        results = list(cls.collection.aggregate(pipeline))
+        if results:
+            return results[0]
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
