@@ -1,7 +1,6 @@
 __all__ = ["products_router"]
 
 from typing import Annotated
-from fastapi import APIRouter
 
 from fastapi import HTTPException, Query, APIRouter
 from fastapi.responses import JSONResponse
@@ -13,8 +12,6 @@ from ..services import (
     ProductsServiceDependency,
     AuthorizationDependency,
 )
-
-from typing import List
 
 products_router = APIRouter(prefix="/products", tags=["Products"])
 
@@ -38,7 +35,7 @@ async def list_deleted_products(
 
 
 @products_router.get("/include_deleted")
-async def list_products(
+async def list_all_products(
     products: ProductsServiceDependency,
     security: AuthorizationDependency,
     query: Annotated[FilterParamsProduct, Query()],
@@ -57,7 +54,7 @@ async def get_product(id: PydanticObjectId):
 
 @products_router.get("/product_by_seller/{id}")
 async def get_by_seller(id: PydanticObjectId):
-    product = ProductsService.get_one(id)
+    product = ProductsService.get_by_seller(id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product

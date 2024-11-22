@@ -3,6 +3,7 @@ __all__ = ["ProductsServiceDependency", "ProductsService"]
 from datetime import datetime
 from typing import Annotated, List
 
+from bson import ObjectId
 from fastapi import Depends, HTTPException, status
 from pydantic_mongo import PydanticObjectId
 from ..utils import validate_and_extract_data
@@ -19,6 +20,7 @@ class ProductsService:
     def create_one(cls, product: CreateProduct):
         try:
             insertion_product = product.model_dump(exclude_unset=False)
+            insertion_product["seller_id"] = ObjectId(insertion_product["seller_id"])
 
             new_product = cls.collection.insert_one(insertion_product)
             return StoredProduct.model_validate(
@@ -147,20 +149,9 @@ class ProductsService:
     @classmethod
     def get_by_seller(cls, seller_id: PydanticObjectId):
         try:
+            print(seller_id)
             cursor = cls.collection.find({"seller_id": seller_id})
-            products = list(cursor)
-            if products:
-                return [
-                    StoredProduct.model_validate(product).model_dump()
-                    for product in products
-                ]
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="No products found for the seller",
-                )
-        except HTTPException:
-            raise
+            return validate_and_extract_data(cursor, StoredProduct)
         except Exception as e:
             logger.error(f"Error in get_by_seller: {str(e)}")
             raise HTTPException(
