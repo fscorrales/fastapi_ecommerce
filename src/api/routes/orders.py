@@ -77,6 +77,20 @@ async def remove_product(
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
+@orders_router.put("/shopping_cart/update/{customer_id}")
+async def update_product_quantity(
+    customer_id: PydanticObjectId,
+    product: OrderProducts,
+    orders: OrdersServiceDependency,
+    security: AuthorizationDependency,
+):
+    try:
+        security.is_admin_or_same_customer(customer_id)
+        return orders.update_cart(customer_id, product)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+
+
 # @orders_router.get("/get_by_seller/{id}")
 # def get_orders_by_seller_id(
 #     id: PydanticObjectId,
