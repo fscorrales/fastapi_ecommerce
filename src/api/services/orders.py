@@ -29,47 +29,49 @@ class OrdersService:
     def get_shopping_cart_by_customer(
         cls, customer_id: PydanticObjectId, order_status: str = "shopping"
     ):
-        pipeline = [
-            # Filters orders by customer_id and order_status
-            {
-                "$match": {
-                    "customer_id": customer_id,
-                    "status": order_status,
-                }
-            },
-            # Performs a lookup to retrieve the products associated with the orde
-            {"$unwind": "$order_products"},
-            {
-                "$lookup": {
-                    "from": "products",
-                    "localField": "order_products.product_id",
-                    "foreignField": "_id",
-                    "as": "product",
-                }
-            },
-            {"$unwind": "$product"},
-            {
-                "$group": {
-                    "_id": "$_id",
-                    "customer_id": {"$first": "$customer_id"},
-                    "status": {"$first": "$status"},
-                    "order_products": {
-                        "$push": {
-                            "product_id": "$order_products.product_id",
-                            "price": "$order_products.price",
-                            "quantity": "$order_products.quantity",
-                            "name": "$product.name",
-                            "image": "$product.image",
-                            "category": "$product.category",
-                            "description": "$product.description",
-                            "seller_id": "$product.seller_id",
-                        }
-                    },
-                }
-            },
-        ]
-        cursor = cls.collection.aggregate(pipeline)
-        if cursor:
+        if cls.collection.find_one(
+            {"customer_id": customer_id, "status": order_status}
+        ):
+            pipeline = [
+                # Filters orders by customer_id and order_status
+                {
+                    "$match": {
+                        "customer_id": customer_id,
+                        "status": order_status,
+                    }
+                },
+                # Performs a lookup to retrieve the products associated with the orde
+                {"$unwind": "$order_products"},
+                {
+                    "$lookup": {
+                        "from": "products",
+                        "localField": "order_products.product_id",
+                        "foreignField": "_id",
+                        "as": "product",
+                    }
+                },
+                {"$unwind": "$product"},
+                {
+                    "$group": {
+                        "_id": "$_id",
+                        "customer_id": {"$first": "$customer_id"},
+                        "status": {"$first": "$status"},
+                        "order_products": {
+                            "$push": {
+                                "product_id": "$order_products.product_id",
+                                "price": "$order_products.price",
+                                "quantity": "$order_products.quantity",
+                                "name": "$product.name",
+                                "image": "$product.image",
+                                "category": "$product.category",
+                                "description": "$product.description",
+                                "seller_id": "$product.seller_id",
+                            }
+                        },
+                    }
+                },
+            ]
+            cursor = cls.collection.aggregate(pipeline)
             return validate_and_extract_data(cursor, JoinedOrder)
         else:
             raise HTTPException(
