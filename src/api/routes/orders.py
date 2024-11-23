@@ -36,7 +36,7 @@ def get_order_by_id(
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
-@orders_router.get("/shopping_cart_by_customer/{customer_id}")
+@orders_router.get("/shopping_cart/{customer_id}")
 def get_shopping_cart_by_customer(
     customer_id: PydanticObjectId,
     security: AuthorizationDependency,
@@ -49,7 +49,7 @@ def get_shopping_cart_by_customer(
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
-@orders_router.post("/add/{customer_id}")
+@orders_router.post("/shopping_cart/add/{customer_id}")
 async def add_product(
     customer_id: PydanticObjectId,
     product: OrderProducts,
@@ -59,6 +59,20 @@ async def add_product(
     try:
         security.is_admin_or_same_customer(customer_id)
         return orders.add_to_cart(customer_id, product)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+
+
+@orders_router.delete("/shopping_cart/remove/{customer_id}")
+async def remove_product(
+    customer_id: PydanticObjectId,
+    product: OrderProducts,
+    orders: OrdersServiceDependency,
+    security: AuthorizationDependency,
+):
+    try:
+        security.is_admin_or_same_customer(customer_id)
+        return orders.remove_from_cart(customer_id, product)
     except HTTPException as e:
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 

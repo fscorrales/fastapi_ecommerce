@@ -13,6 +13,7 @@ from ..models import (
     Order,
     UpdateOrderProduct,
     StoredOrder,
+    StoredProduct,
     OrderStatus,
     OrderProducts,
     JoinedOrder,
@@ -112,15 +113,32 @@ class OrdersService:
             raise HTTPException(detail=e.detail, status_code=e.status_code)
 
     @classmethod
+    def remove_from_cart(cls, customer_id: PydanticObjectId, product: OrderProducts):
+        try:
+            if document := cls.collection.find_one(
+                {"customer_id": customer_id, "status": "shopping"}
+            ):
+                return cls.update_order_product(
+                    document.get("_id"), product, opt="remove"
+                )
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Shopping cart not found",
+                )
+        except HTTPException as e:
+            raise HTTPException(detail=e.detail, status_code=e.status_code)
+
+    @classmethod
     def update_order_product(
         cls,
         id: PydanticObjectId,
         product: OrderProducts,
         opt: Literal["add", "remove"] = "add",
     ):
+        update_product = product.model_dump()
+        update_product["product_id"] = ObjectId(update_product["product_id"])
         try:
-            update_product = product.model_dump()
-            update_product["product_id"] = ObjectId(update_product["product_id"])
             if opt == "add":
                 if cls.collection.find_one(
                     {
@@ -154,7 +172,7 @@ class OrdersService:
                     )
                 document = cls.collection.find_one_and_update(
                     {"_id": id},
-                    {"$pull": {"order_products": update_product}},
+                    {"$pull": {"order_products": {"product_id": product.product_id}}},
                     return_document=True,
                 )
             if document:
