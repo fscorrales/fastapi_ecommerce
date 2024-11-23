@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic_mongo import PydanticObjectId
 
-from ..models import UpdateOrderProduct, OrderStatus
+from ..models import UpdateOrderProduct, OrderStatus, OrderProducts
 from ..services import (
     OrdersServiceDependency,
     AuthorizationDependency,
@@ -36,6 +36,33 @@ def get_order_by_id(
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
+@orders_router.get("/shopping_cart_by_customer/{customer_id}")
+def get_shopping_cart_by_customer(
+    customer_id: PydanticObjectId,
+    security: AuthorizationDependency,
+    orders: OrdersServiceDependency,
+):
+    try:
+        security.is_admin_or_same_customer(customer_id)
+        return orders.get_orders_by_customer_id(customer_id, order_status="shopping")
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+
+
+@orders_router.post("/add/{customer_id}")
+async def add_product(
+    customer_id: PydanticObjectId,
+    product: OrderProducts,
+    orders: OrdersServiceDependency,
+    security: AuthorizationDependency,
+):
+    try:
+        security.is_admin_or_same_customer(customer_id)
+        return orders.add_to_cart(customer_id, product)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+
+
 # @orders_router.get("/get_by_seller/{id}")
 # def get_orders_by_seller_id(
 #     id: PydanticObjectId,
@@ -48,19 +75,6 @@ def get_order_by_id(
 #             status_code=status.HTTP_401_UNAUTHORIZED,
 #         )
 #     return orders.get_all(QueryParams(filter=f"seller_id={id}"), security)
-
-
-@orders_router.get("/shopping_cart_by_customer/{id}")
-def get_shopping_cart_by_customer(
-    id: PydanticObjectId,
-    security: AuthorizationDependency,
-    orders: OrdersServiceDependency,
-):
-    try:
-        security.is_admin_or_same_customer(id)
-        return orders.get_shopping_cart_by_customer(id)
-    except HTTPException as e:
-        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 # @orders_router.get("/get_by_product/{id}")

@@ -26,7 +26,20 @@ class OrdersService:
     collection = db[collection_name]
 
     @classmethod
-    def get_shopping_cart_by_customer(
+    def create_one(cls, order: Order):
+        new_order = order.model_dump()
+        new_order["customer_id"] = ObjectId(new_order["customer_id"])
+        for product in new_order["order_products"]:
+            product["product_id"] = ObjectId(product["product_id"])
+        document = cls.collection.insert_one(new_order)
+        if document:
+            return StoredOrder.model_validate(
+                cls.collection.find_one(document.inserted_id)
+            )
+        return None
+
+    @classmethod
+    def get_orders_by_customer_id(
         cls, customer_id: PydanticObjectId, order_status: str = "shopping"
     ):
         if cls.collection.find_one(
@@ -81,15 +94,22 @@ class OrdersService:
 
     # Used by seed_database.py
     @classmethod
-    def create_one(cls, order: Order):
-        new_order = order.model_dump()
-        new_order["customer_id"] = ObjectId(new_order["customer_id"])
-        for product in new_order["order_products"]:
-            product["product_id"] = ObjectId(product["product_id"])
-        document = cls.collection.insert_one(new_order)
-        if document:
-            return str(document.inserted_id)
-        return None
+    def add_to_cart(cls, customer_id: PydanticObjectId, product: OrderProducts):
+        try:
+            if document := cls.collection.find_one(
+                {"customer_id": customer_id, "status": "shopping"}
+            ):
+                return cls.update_order_product(document.get("_id"), product, opt="add")
+            else:
+                order = {
+                    "customer_id": customer_id,
+                    "order_products": [product],
+                    "status": "shopping",
+                }
+                order = Order.model_validate(order)
+                return cls.create_one(order)
+        except HTTPException as e:
+            raise HTTPException(detail=e.detail, status_code=e.status_code)
 
     @classmethod
     def update_order_product(
@@ -98,24 +118,51 @@ class OrdersService:
         product: OrderProducts,
         opt: Literal["add", "remove"] = "add",
     ):
-        if opt == "add":
-            document = cls.collection.find_one_and_update(
-                {"_id": id},
-                {"$push": {"products": product}},
-                return_document=True,
-            )
-        else:
-            document = cls.collection.find_one_and_update(
-                {"_id": id},
-                {"$pull": {"products": product}},
-                return_document=True,
-            )
-        logger.info(document)
-        if document:
-            return StoredOrder.model_validate(document).model_dump()
-        else:
+        try:
+            update_product = product.model_dump()
+            update_product["product_id"] = ObjectId(update_product["product_id"])
+            if opt == "add":
+                if cls.collection.find_one(
+                    {
+                        "$and": [
+                            {"_id": id},
+                            {"order_products.product_id": product.product_id},
+                        ]
+                    },
+                ):
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Product already in cart",
+                    )
+                document = cls.collection.find_one_and_update(
+                    {"_id": id},
+                    {"$push": {"order_products": update_product}},
+                    return_document=True,
+                )
+            else:
+                if not cls.collection.find_one(
+                    {
+                        "$and": [
+                            {"_id": id},
+                            {"order_products.product_id": product.product_id},
+                        ]
+                    },
+                ):
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Product not in cart",
+                    )
+                document = cls.collection.find_one_and_update(
+                    {"_id": id},
+                    {"$pull": {"order_products": update_product}},
+                    return_document=True,
+                )
+            if document:
+                return StoredOrder.model_validate(document).model_dump()
+        except HTTPException as e:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+                status_code=e.status_code,
+                detail=e.detail,
             )
 
     @classmethod
