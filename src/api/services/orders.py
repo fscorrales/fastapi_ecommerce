@@ -9,9 +9,16 @@ from fastapi import Depends, HTTPException, status
 from pydantic_mongo import PydanticObjectId
 
 from ..config import COLLECTIONS, db, logger
-from ..models import Order, UpdateOrderProduct, StoredOrder, OrderStatus, OrderProducts
+from ..models import (
+    Order,
+    UpdateOrderProduct,
+    StoredOrder,
+    OrderStatus,
+    OrderProducts,
+    JoinedOrder,
+)
 from ..services import AuthorizationDependency
-from ..utils import validate_and_extract_data, serialize_object_id
+from ..utils import validate_and_extract_data
 
 
 class OrdersService:
@@ -61,9 +68,9 @@ class OrdersService:
                 }
             },
         ]
-        results = list(cls.collection.aggregate(pipeline))
-        if results:
-            return [serialize_object_id(item) for item in results][0]
+        cursor = cls.collection.aggregate(pipeline)
+        if cursor:
+            return validate_and_extract_data(cursor, JoinedOrder)
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
