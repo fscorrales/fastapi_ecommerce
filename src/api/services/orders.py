@@ -11,40 +11,7 @@ from pydantic_mongo import PydanticObjectId
 from ..config import COLLECTIONS, db, logger
 from ..models import Order, UpdateOrderProduct, StoredOrder, OrderStatus, OrderProducts
 from ..services import AuthorizationDependency
-from ..utils import validate_and_extract_data
-
-
-def get_orders_by_seller_id_aggregate_query(
-    seller_id: PydanticObjectId, pre_filters: dict | None = None
-):
-
-    return [
-        # Only if we have an order id
-        {"$match": pre_filters},
-        # Then we need to lookup the products collection
-        {
-            "$lookup": {
-                "from": "products",
-                "localField": "order_products.product_id",
-                "foreignField": "_id",
-                "as": "product",
-            }
-        },
-        # Then we need to unwind the product
-        {"$unwind": "$product"},
-        # Then we need to filter by the seller
-        {"$match": {"product.seller_id": ObjectId(seller_id)}},
-        # Finilly we need to remove duplicates
-        # and remove the field of the matched product
-        {
-            "$group": {
-                "_id": "$_id",
-                "customer_id": {"$first": "$customer_id"},
-                "status": {"$first": "$status"},
-                "order_products": {"$first": "$order_products"},
-            }
-        },
-    ]
+from ..utils import validate_and_extract_data, serialize_object_id
 
 
 class OrdersService:
@@ -74,17 +41,21 @@ class OrdersService:
                 }
             },
             {"$unwind": "$product"},
-            # Groups the results by order ID and extracts the necessary fields for each product
             {
                 "$group": {
-                    "_id": {"$toString": "$_id"},
+                    "_id": "$_id",
+                    "customer_id": {"$first": "$customer_id"},
+                    "status": {"$first": "$status"},
                     "order_products": {
                         "$push": {
-                            "product_id": {"$toString": "$order_products.product_id"},
+                            "product_id": "$order_products.product_id",
                             "price": "$order_products.price",
                             "quantity": "$order_products.quantity",
-                            "name": "$order_products.name",
-                            "image": "$order_products.image",
+                            "name": "$product.name",
+                            "image": "$product.image",
+                            "category": "$product.category",
+                            "description": "$product.description",
+                            "seller_id": "$product.seller_id",
                         }
                     },
                 }
@@ -92,10 +63,11 @@ class OrdersService:
         ]
         results = list(cls.collection.aggregate(pipeline))
         if results:
-            return results[0]
+            return [serialize_object_id(item) for item in results][0]
         else:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=order_status + " order not found",
             )
 
     # Used by seed_database.py
