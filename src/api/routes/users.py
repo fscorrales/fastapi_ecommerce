@@ -18,7 +18,7 @@ async def list_roles():
 
 
 @users_router.post("/")
-def create_user(
+async def create_user(
     user: CreateUser,
     users: UsersServiceDependency,
     security: AuthorizationDependency,

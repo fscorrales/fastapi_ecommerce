@@ -37,7 +37,8 @@ class UsersService:
         )
         if existing_user is not None:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="User already exists"
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username or email already exists",
             )
 
         hash_password = Authentication.get_password_hash(user.password)
@@ -103,6 +104,24 @@ class UsersService:
     @classmethod
     def update_one(cls, id: PydanticObjectId, user: UpdateUser, is_admin: bool):
         exclude = {"password"} if is_admin else {"password", "role"}
+        updated_fields = user.model_dump(exclude=exclude, exclude_unset=True)
+
+        # Check if the updated username or email already exists
+        existing_user = cls.collection.find_one(
+            {
+                "$or": [
+                    {"username": updated_fields.get("username")},
+                    {"email": updated_fields.get("email")},
+                ],
+                "_id": {"$ne": id},  # exclude the current user
+            }
+        )
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username or email already exists",
+            )
+
         document = cls.collection.find_one_and_update(
             {"_id": id},
             {"$set": user.model_dump(exclude=exclude, exclude_unset=True)},
