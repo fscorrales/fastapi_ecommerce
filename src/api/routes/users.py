@@ -25,7 +25,8 @@ def create_user(
 ):
     # try:
     security.is_admin_or_raise()
-    return users.create_one(user)
+    inserted_id = users.create_one(user)
+    return {"result message": f"User created with id: {inserted_id}"}
 
 
 # except HTTPException as e:
