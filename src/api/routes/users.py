@@ -23,14 +23,11 @@ def create_user(
     users: UsersServiceDependency,
     security: AuthorizationDependency,
 ):
-    # try:
-    security.is_admin_or_raise()
-    inserted_id = users.create_one(user)
-    return {"result message": f"User created with id: {inserted_id}"}
-
-
-# except HTTPException as e:
-#     return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+    try:
+        security.is_admin_or_raise()
+        return users.create_one(user)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 @users_router.get("/")
